@@ -48,10 +48,10 @@ public class DashboardController {
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     private static final String[] ACCENT_COLORS = {
-        "#2563EB", "#059669", "#7C3AED", "#D97706", "#E11D48"
+        "#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"
     };
     private static final String[] ACCENT_LIGHT = {
-        "#EFF6FF", "#ECFDF5", "#F5F3FF", "#FFFBEB", "#FFF1F2"
+        "#EEF2FF", "#ECFDF5", "#FFFBEB", "#FEF2F2", "#F5F3FF"
     };
 
     private List<ProjectModel> allProjects = List.of();

@@ -5,54 +5,77 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.taskforge.ui.controller.ReportScoreController"
-            style="-fx-background-color: #F0F4FF;">
+            style="-fx-background-color: #F8FAFC;">
 
+    <!-- ==================== HEADER ==================== -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="12"
-              style="-fx-background-color: #1E3A8A; -fx-padding: 10 20 10 20;">
-            <Button text="← Kanban" onAction="#handleBack"
-                    style="-fx-background-color: transparent; -fx-text-fill: #93C5FD;
-                           -fx-font-size: 13px; -fx-cursor: hand; -fx-border-color: #93C5FD;
-                           -fx-border-radius: 4px; -fx-padding: 4 10 4 10;"/>
-            <Label fx:id="projectTitleLabel"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-            <Label text="— Contribution Score"
-                   style="-fx-font-size: 14px; -fx-text-fill: #93C5FD;"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="statusLabel" style="-fx-text-fill: #FCA5A5; -fx-font-size: 12px;"/>
-            <Button text="↻ Refresh" onAction="#handleRefresh"
-                    style="-fx-background-color: #374151; -fx-text-fill: white; -fx-font-size: 12px;
-                           -fx-background-radius: 5px; -fx-padding: 5 12 5 12; -fx-cursor: hand;"/>
-            <Button fx:id="generateReportButton" text="📋 Generate Laporan" onAction="#handleGenerateReport"
-                    style="-fx-background-color: #10B981; -fx-text-fill: white; -fx-font-size: 13px;
-                           -fx-font-weight: bold; -fx-background-radius: 6px;
-                           -fx-padding: 6 14 6 14; -fx-cursor: hand;"/>
-        </HBox>
-    </top>
+        <VBox style="-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 8, 0, 0, 3);">
 
-    <center>
-        <VBox spacing="0">
-            <!-- Legend -->
-            <HBox spacing="20" alignment="CENTER_LEFT"
-                  style="-fx-padding: 10 24 10 24; -fx-background-color: white;
-                         -fx-border-color: #E5E7EB; -fx-border-width: 0 0 1 0;">
-                <Label text="Keterangan:"
-                       style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                <Label text="●  Hijau = ≥ rata-rata"
-                       style="-fx-font-size: 12px; -fx-text-fill: #10B981;"/>
-                <Label text="●  Kuning = 50–80% rata-rata"
-                       style="-fx-font-size: 12px; -fx-text-fill: #F59E0B;"/>
-                <Label text="●  Merah = &lt; 50% rata-rata"
-                       style="-fx-font-size: 12px; -fx-text-fill: #EF4444;"/>
+            <!-- Top bar -->
+            <HBox alignment="CENTER_LEFT" spacing="14"
+                  style="-fx-background-color: #0F172A; -fx-padding: 12 24 12 20;">
+                <Button text="← Kanban" onAction="#handleBack"
+                        style="-fx-background-color: transparent; -fx-text-fill: #94A3B8;
+                               -fx-font-size: 12px; -fx-cursor: hand;
+                               -fx-border-color: #334155; -fx-border-radius: 6;
+                               -fx-background-radius: 6; -fx-padding: 5 12 5 12;"/>
+                <VBox spacing="1">
+                    <Label fx:id="projectTitleLabel"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                    <Label text="Kontribusi &amp; Laporan"
+                           style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="statusLabel"
+                       style="-fx-text-fill: #FCA5A5; -fx-font-size: 12px;"/>
+                <Button text="Refresh" onAction="#handleRefresh"
+                        style="-fx-background-color: white; -fx-text-fill: #475569;
+                               -fx-font-size: 12px; -fx-background-radius: 8;
+                               -fx-padding: 6 14 6 14; -fx-cursor: hand;
+                               -fx-border-color: #334155; -fx-border-radius: 8; -fx-border-width: 1;"/>
+                <Button fx:id="generateReportButton" text="Generate Laporan"
+                        onAction="#handleGenerateReport"
+                        style="-fx-background-color: #10B981; -fx-text-fill: white;
+                               -fx-font-size: 13px; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-padding: 7 16 7 16; -fx-cursor: hand;"/>
             </HBox>
 
-            <!-- Score cards -->
+            <!-- Legend bar -->
+            <HBox spacing="24" alignment="CENTER_LEFT"
+                  style="-fx-background-color: white; -fx-padding: 12 28 12 28;
+                         -fx-border-color: #E2E8F0; -fx-border-width: 0 0 1 0;">
+                <Label text="KETERANGAN"
+                       style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #94A3B8;"/>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Label text="●"
+                           style="-fx-text-fill: #10B981; -fx-font-size: 12px;"/>
+                    <Label text="Hijau = di atas rata-rata"
+                           style="-fx-font-size: 12px; -fx-text-fill: #475569;"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Label text="●"
+                           style="-fx-text-fill: #F59E0B; -fx-font-size: 12px;"/>
+                    <Label text="Kuning = 50–80% rata-rata"
+                           style="-fx-font-size: 12px; -fx-text-fill: #475569;"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Label text="●"
+                           style="-fx-text-fill: #EF4444; -fx-font-size: 12px;"/>
+                    <Label text="Merah = di bawah 50% rata-rata"
+                           style="-fx-font-size: 12px; -fx-text-fill: #475569;"/>
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ==================== SCORES ==================== -->
+    <center>
+        <VBox spacing="0">
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
                         style="-fx-background: transparent; -fx-background-color: transparent;">
-                <VBox fx:id="scoresPane" spacing="12"
-                      style="-fx-padding: 20 24 20 24;"/>
+                <VBox fx:id="scoresPane" spacing="14"
+                      style="-fx-padding: 24 28 28 28;"/>
             </ScrollPane>
-
             <VBox fx:id="reportPane"/>
         </VBox>
     </center>

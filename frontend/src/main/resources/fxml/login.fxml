@@ -1,65 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.taskforge.ui.controller.LoginController"
-      styleClass="root-container"
-      alignment="CENTER"
-      spacing="0"
-      prefWidth="420" prefHeight="480">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.taskforge.ui.controller.LoginController"
+           prefWidth="480" prefHeight="580"
+           style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #EEF2FF, #F1F5F9);">
 
-    <padding>
-        <Insets top="40" right="48" bottom="40" left="48"/>
-    </padding>
+    <VBox alignment="CENTER" spacing="0" maxWidth="400">
 
-    <!-- Logo / Title -->
-    <VBox alignment="CENTER" spacing="6">
-        <Label text="TaskForge" styleClass="app-title"/>
-        <Label text="Project Hub untuk Mahasiswa" styleClass="app-subtitle"/>
-    </VBox>
-
-    <Region prefHeight="32"/>
-
-    <!-- Form Card -->
-    <VBox styleClass="form-card" spacing="16">
-        <padding>
-            <Insets top="28" right="28" bottom="28" left="28"/>
-        </padding>
-
-        <Label text="Masuk ke Akun" styleClass="form-title"/>
-
-        <VBox spacing="6">
-            <Label text="Email" styleClass="field-label"/>
-            <TextField fx:id="emailField"
-                       promptText="Masukkan email kamu"
-                       styleClass="text-field"/>
+        <!-- Logo -->
+        <VBox alignment="CENTER" spacing="6" style="-fx-padding: 0 0 28 0;">
+            <HBox alignment="CENTER" spacing="10">
+                <Label text="⬡"
+                       style="-fx-font-size: 28px; -fx-text-fill: #4F46E5;"/>
+                <Label text="TaskForge"
+                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1E293B;"/>
+            </HBox>
+            <Label text="Project Hub untuk Mahasiswa"
+                   style="-fx-font-size: 13px; -fx-text-fill: #94A3B8;"/>
         </VBox>
 
-        <VBox spacing="6">
-            <Label text="Password" styleClass="field-label"/>
-            <PasswordField fx:id="passwordField"
-                           promptText="Masukkan password"
+        <!-- Card -->
+        <VBox styleClass="form-card" spacing="18"
+              style="-fx-pref-width: 400;">
+            <padding>
+                <Insets top="32" right="32" bottom="32" left="32"/>
+            </padding>
+
+            <VBox spacing="4">
+                <Label text="Selamat datang kembali"
+                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #0F172A;"/>
+                <Label text="Masuk untuk mengelola proyek kamu"
+                       style="-fx-font-size: 13px; -fx-text-fill: #94A3B8;"/>
+            </VBox>
+
+            <VBox spacing="6">
+                <Label text="Alamat Email" styleClass="field-label"/>
+                <TextField fx:id="emailField"
+                           promptText="nama@email.com"
                            styleClass="text-field"/>
+            </VBox>
+
+            <VBox spacing="6">
+                <Label text="Password" styleClass="field-label"/>
+                <PasswordField fx:id="passwordField"
+                               promptText="Masukkan password"
+                               styleClass="text-field"/>
+            </VBox>
+
+            <Label fx:id="errorLabel" styleClass="error-label"
+                   wrapText="true" visible="false"/>
+
+            <VBox spacing="10" alignment="CENTER" style="-fx-padding: 4 0 0 0;">
+                <Button fx:id="loginButton"
+                        text="Masuk"
+                        onAction="#handleLogin"
+                        styleClass="primary-button"
+                        maxWidth="Infinity"/>
+                <ProgressIndicator fx:id="loadingIndicator"
+                                   prefWidth="28" prefHeight="28"
+                                   visible="false"/>
+            </VBox>
+
+            <HBox alignment="CENTER" spacing="4">
+                <Label text="Belum punya akun?"
+                       style="-fx-font-size: 13px; -fx-text-fill: #64748B;"/>
+                <Hyperlink text="Daftar sekarang"
+                           onAction="#handleRegisterLink"
+                           style="-fx-text-fill: #4F46E5; -fx-font-size: 13px;
+                                  -fx-font-weight: bold; -fx-cursor: hand;"/>
+            </HBox>
         </VBox>
-
-        <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"/>
-
-        <VBox spacing="8" alignment="CENTER">
-            <Button fx:id="loginButton"
-                    text="Masuk"
-                    onAction="#handleLogin"
-                    styleClass="primary-button"
-                    maxWidth="Infinity"/>
-
-            <ProgressIndicator fx:id="loadingIndicator"
-                               prefWidth="28" prefHeight="28"/>
-        </VBox>
-
-        <Hyperlink text="Belum punya akun? Daftar"
-                   onAction="#handleRegisterLink"
-                   styleClass="register-link"/>
     </VBox>
-</VBox>
+</StackPane>

@@ -5,82 +5,116 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.taskforge.ui.controller.KanbanController"
-            style="-fx-background-color: #F0F4FF;">
+            style="-fx-background-color: #F8FAFC;">
 
-    <!-- Top header -->
+    <!-- ==================== HEADER ==================== -->
     <top>
-        <VBox>
-            <!-- Primary header row -->
-            <HBox alignment="CENTER_LEFT" spacing="12"
-                  style="-fx-background-color: #1E3A8A; -fx-padding: 10 20 10 20;">
+        <VBox style="-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 8, 0, 0, 3);">
+
+            <!-- Top bar -->
+            <HBox alignment="CENTER_LEFT" spacing="14"
+                  style="-fx-background-color: #0F172A; -fx-padding: 12 24 12 20;">
                 <Button text="← Dashboard" onAction="#handleBack"
-                        style="-fx-background-color: transparent; -fx-text-fill: #93C5FD;
-                               -fx-font-size: 13px; -fx-cursor: hand; -fx-border-color: #93C5FD;
-                               -fx-border-radius: 4px; -fx-padding: 4 10 4 10;"/>
+                        style="-fx-background-color: transparent; -fx-text-fill: #94A3B8;
+                               -fx-font-size: 12px; -fx-cursor: hand;
+                               -fx-border-color: #334155; -fx-border-radius: 6;
+                               -fx-background-radius: 6; -fx-padding: 5 12 5 12;"/>
                 <Label fx:id="projectTitleLabel"
-                       style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white;
-                              -fx-max-width: 500; -fx-wrap-text: false;"/>
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;
+                              -fx-max-width: 500;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="statusLabel" style="-fx-text-fill: #FCA5A5; -fx-font-size: 12px;"/>
+                <Label fx:id="statusLabel"
+                       style="-fx-text-fill: #FCA5A5; -fx-font-size: 12px;"/>
                 <Button fx:id="addTaskButton" text="+ Tambah Task"
                         onAction="#handleAddTask"
-                        style="-fx-background-color: #10B981; -fx-text-fill: white; -fx-font-size: 13px;
-                               -fx-font-weight: bold; -fx-background-radius: 6px;
-                               -fx-padding: 6 14 6 14; -fx-cursor: hand;"/>
+                        style="-fx-background-color: #4F46E5; -fx-text-fill: white;
+                               -fx-font-size: 13px; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-padding: 7 16 7 16;
+                               -fx-cursor: hand;"/>
             </HBox>
 
-            <!-- Navigation tab row -->
+            <!-- Tab bar: white with underline on active tab -->
             <HBox alignment="CENTER_LEFT" spacing="0"
-                  style="-fx-background-color: #1E3A8A; -fx-padding: 0 20 0 20;
-                         -fx-border-color: #2563EB; -fx-border-width: 1 0 0 0;">
-                <Button text="📋 Kanban"
-                        style="-fx-background-color: #2563EB; -fx-text-fill: white; -fx-font-size: 12px;
-                               -fx-padding: 6 16 6 16; -fx-background-radius: 0; -fx-cursor: hand;"/>
-                <Button text="📁 File Hub" onAction="#handleFileHub"
-                        style="-fx-background-color: transparent; -fx-text-fill: #93C5FD; -fx-font-size: 12px;
-                               -fx-padding: 6 16 6 16; -fx-background-radius: 0; -fx-cursor: hand;"/>
-                <Button text="📊 Laporan &amp; Skor" onAction="#handleReport"
-                        style="-fx-background-color: transparent; -fx-text-fill: #93C5FD; -fx-font-size: 12px;
-                               -fx-padding: 6 16 6 16; -fx-background-radius: 0; -fx-cursor: hand;"/>
+                  style="-fx-background-color: white;
+                         -fx-border-color: #E2E8F0; -fx-border-width: 0 0 1 0;
+                         -fx-padding: 0 24 0 24;">
+                <Button text="Kanban"
+                        style="-fx-background-color: transparent; -fx-text-fill: #4F46E5;
+                               -fx-font-size: 13px; -fx-font-weight: bold;
+                               -fx-padding: 11 18 11 18; -fx-background-radius: 0; -fx-cursor: hand;
+                               -fx-border-color: transparent transparent #4F46E5 transparent;
+                               -fx-border-width: 0 0 2 0;"/>
+                <Button text="File Hub" onAction="#handleFileHub"
+                        style="-fx-background-color: transparent; -fx-text-fill: #64748B;
+                               -fx-font-size: 13px; -fx-padding: 11 18 11 18;
+                               -fx-background-radius: 0; -fx-cursor: hand;"/>
+                <Button text="Laporan &amp; Skor" onAction="#handleReport"
+                        style="-fx-background-color: transparent; -fx-text-fill: #64748B;
+                               -fx-font-size: 13px; -fx-padding: 11 18 11 18;
+                               -fx-background-radius: 0; -fx-cursor: hand;"/>
             </HBox>
         </VBox>
     </top>
 
-    <!-- Kanban columns -->
+    <!-- ==================== KANBAN BOARD ==================== -->
+    <!-- NOTE: KanbanController.trimColumn() keeps child[0] (header HBox),
+         removes child[1..n] on refresh, then addTaskCards() appends to the VBox -->
     <center>
         <ScrollPane fitToHeight="true"
                     style="-fx-background: transparent; -fx-background-color: transparent;">
-            <HBox spacing="12" style="-fx-padding: 16;">
+            <HBox spacing="16" style="-fx-padding: 20 24 24 24;">
 
                 <!-- TO-DO -->
-                <VBox fx:id="todoColumn" styleClass="kanban-column" spacing="10" VBox.vgrow="ALWAYS">
-                    <HBox alignment="CENTER_LEFT" spacing="8">
-                        <Label text="●" style="-fx-text-fill: #6B7280; -fx-font-size: 10px;"/>
-                        <Label text="To-Do" styleClass="kanban-column-title"/>
+                <VBox fx:id="todoColumn" spacing="10"
+                      style="-fx-background-color: #F1F5F9; -fx-background-radius: 14;
+                             -fx-padding: 0 10 14 10; -fx-min-width: 260; -fx-pref-width: 272;">
+                    <!-- Header: index 0 — kept by trimColumn -->
+                    <HBox alignment="CENTER_LEFT" spacing="8"
+                          style="-fx-padding: 12 0 10 0;
+                                 -fx-border-color: #E2E8F0; -fx-border-width: 0 0 1 0;">
+                        <Label text="●" style="-fx-text-fill: #94A3B8; -fx-font-size: 10px;"/>
+                        <Label text="TO-DO"
+                               style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #64748B;"/>
                     </HBox>
+                    <!-- Task cards appended here by controller -->
                 </VBox>
 
                 <!-- IN PROGRESS -->
-                <VBox fx:id="inProgressColumn" styleClass="kanban-column" spacing="10" VBox.vgrow="ALWAYS">
-                    <HBox alignment="CENTER_LEFT" spacing="8">
-                        <Label text="●" style="-fx-text-fill: #3B82F6; -fx-font-size: 10px;"/>
-                        <Label text="In Progress" styleClass="kanban-column-title"/>
+                <VBox fx:id="inProgressColumn" spacing="10"
+                      style="-fx-background-color: #EEF2FF; -fx-background-radius: 14;
+                             -fx-padding: 0 10 14 10; -fx-min-width: 260; -fx-pref-width: 272;">
+                    <HBox alignment="CENTER_LEFT" spacing="8"
+                          style="-fx-padding: 12 0 10 0;
+                                 -fx-border-color: #C7D2FE; -fx-border-width: 0 0 1 0;">
+                        <Label text="●" style="-fx-text-fill: #4F46E5; -fx-font-size: 10px;"/>
+                        <Label text="IN PROGRESS"
+                               style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #4F46E5;"/>
                     </HBox>
                 </VBox>
 
                 <!-- REVIEW -->
-                <VBox fx:id="reviewColumn" styleClass="kanban-column" spacing="10" VBox.vgrow="ALWAYS">
-                    <HBox alignment="CENTER_LEFT" spacing="8">
+                <VBox fx:id="reviewColumn" spacing="10"
+                      style="-fx-background-color: #FFFBEB; -fx-background-radius: 14;
+                             -fx-padding: 0 10 14 10; -fx-min-width: 260; -fx-pref-width: 272;">
+                    <HBox alignment="CENTER_LEFT" spacing="8"
+                          style="-fx-padding: 12 0 10 0;
+                                 -fx-border-color: #FDE68A; -fx-border-width: 0 0 1 0;">
                         <Label text="●" style="-fx-text-fill: #F59E0B; -fx-font-size: 10px;"/>
-                        <Label text="Review" styleClass="kanban-column-title"/>
+                        <Label text="REVIEW"
+                               style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #D97706;"/>
                     </HBox>
                 </VBox>
 
                 <!-- DONE -->
-                <VBox fx:id="doneColumn" styleClass="kanban-column" spacing="10" VBox.vgrow="ALWAYS">
-                    <HBox alignment="CENTER_LEFT" spacing="8">
+                <VBox fx:id="doneColumn" spacing="10"
+                      style="-fx-background-color: #F0FDF4; -fx-background-radius: 14;
+                             -fx-padding: 0 10 14 10; -fx-min-width: 260; -fx-pref-width: 272;">
+                    <HBox alignment="CENTER_LEFT" spacing="8"
+                          style="-fx-padding: 12 0 10 0;
+                                 -fx-border-color: #A7F3D0; -fx-border-width: 0 0 1 0;">
                         <Label text="●" style="-fx-text-fill: #10B981; -fx-font-size: 10px;"/>
-                        <Label text="Done" styleClass="kanban-column-title"/>
+                        <Label text="DONE"
+                               style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #059669;"/>
                     </HBox>
                 </VBox>
 
