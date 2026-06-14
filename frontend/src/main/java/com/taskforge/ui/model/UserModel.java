@@ -10,7 +10,7 @@ public class UserModel {
     private String email;
     private String role;
     private String nim;
-    private String photoPath;
+    private boolean hasPhoto;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -27,8 +27,8 @@ public class UserModel {
     public String getNim() { return nim; }
     public void setNim(String nim) { this.nim = nim; }
 
-    public String getPhotoPath() { return photoPath; }
-    public void setPhotoPath(String photoPath) { this.photoPath = photoPath; }
+    public boolean isHasPhoto() { return hasPhoto; }
+    public void setHasPhoto(boolean hasPhoto) { this.hasPhoto = hasPhoto; }
 
     @Override
     public String toString() { return name != null ? name + " (" + role + ")" : ""; }

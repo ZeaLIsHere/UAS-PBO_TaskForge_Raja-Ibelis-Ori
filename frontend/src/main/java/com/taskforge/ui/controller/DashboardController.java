@@ -92,32 +92,40 @@ public class DashboardController {
         avatarInitials.setText(initials);
 
         // Photo if available
-        loadPhoto(user.getPhotoPath());
+        loadPhoto(user.isHasPhoto());
     }
 
-    private void loadPhoto(String photoPath) {
-        if (photoPath != null && !photoPath.isBlank()) {
-            // Normalize path separators (backend may return backslashes)
-            String normalizedPath = photoPath.replace("\\", "/");
-            java.io.File photoFile = new java.io.File(normalizedPath);
-            if (!photoFile.exists()) {
-                // Try with original path separators
-                photoFile = new java.io.File(photoPath);
-            }
-            if (photoFile.exists()) {
-                try {
-                    Image img = new Image(photoFile.toURI().toString(), 56, 56, false, true);
-                    if (!img.isError()) {
-                        profilePhoto.setImage(img);
-                        profilePhoto.setVisible(true);
-                        avatarCircle.setVisible(false);
-                        avatarInitials.setVisible(false);
-                        return;
-                    }
-                } catch (Exception ignored) {}
-            }
+    private void loadPhoto(boolean hasPhoto) {
+        if (!hasPhoto) {
+            showInitialsAvatar();
+            return;
         }
-        // Fallback to initials
+        // Fetch photo via authenticated API endpoint — bukan baca file system langsung
+        Task<Image> photoTask = new Task<>() {
+            @Override
+            protected Image call() throws Exception {
+                byte[] bytes = ApiClient.getBytes("/api/users/me/photo");
+                return new Image(new java.io.ByteArrayInputStream(bytes), 56, 56, false, true);
+            }
+        };
+        photoTask.setOnSucceeded(e -> Platform.runLater(() -> {
+            Image img = photoTask.getValue();
+            if (img != null && !img.isError()) {
+                profilePhoto.setImage(img);
+                profilePhoto.setVisible(true);
+                avatarCircle.setVisible(false);
+                avatarInitials.setVisible(false);
+            } else {
+                showInitialsAvatar();
+            }
+        }));
+        photoTask.setOnFailed(e -> Platform.runLater(this::showInitialsAvatar));
+        Thread t = new Thread(photoTask);
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private void showInitialsAvatar() {
         profilePhoto.setVisible(false);
         avatarCircle.setVisible(true);
         avatarInitials.setVisible(true);
@@ -149,8 +157,7 @@ public class DashboardController {
 
         // Photo picker
         Label photoStatusLabel = new Label(
-            user.getPhotoPath() != null && !user.getPhotoPath().isBlank()
-                ? "Foto sudah ada" : "Belum ada foto"
+            user.isHasPhoto() ? "Foto sudah ada" : "Belum ada foto"
         );
         photoStatusLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #6B7280;");
 
@@ -232,8 +239,7 @@ public class DashboardController {
                 // 3. Re-fetch updated profile
                 ApiResponse<Object> meResp = ApiClient.get("/api/users/me", Object.class);
                 if (!meResp.isSuccess()) throw new Exception(meResp.getMessage());
-                String json = MAPPER.writeValueAsString(meResp.getData());
-                return MAPPER.readValue(json, UserModel.class);
+                return MAPPER.convertValue(meResp.getData(), UserModel.class);
             }
         };
 
@@ -269,8 +275,7 @@ public class DashboardController {
             protected List<ProjectModel> call() throws Exception {
                 ApiResponse<Object> raw = ApiClient.get("/api/projects", Object.class);
                 if (!raw.isSuccess()) throw new Exception(raw.getMessage());
-                String json = MAPPER.writeValueAsString(raw.getData());
-                return MAPPER.readValue(json, new TypeReference<List<ProjectModel>>() {});
+                return MAPPER.convertValue(raw.getData(), new TypeReference<List<ProjectModel>>() {});
             }
         };
 
@@ -374,25 +379,12 @@ public class DashboardController {
         pctLabel.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: " + accentColor + ";");
         progressHeader.getChildren().addAll(tasksLabel, spacer, pctLabel);
 
-        StackPane progressTrack = new StackPane();
-        progressTrack.setMaxWidth(Double.MAX_VALUE);
-        progressTrack.setPrefHeight(7);
-        progressTrack.setStyle("-fx-background-color: #E2E8F0; -fx-background-radius: 4;");
+        ProgressBar progressBar = new ProgressBar(progressVal);
+        progressBar.setMaxWidth(Double.MAX_VALUE);
+        progressBar.setPrefHeight(7);
+        progressBar.setStyle("-fx-accent: " + accentColor + ";");
 
-        Region progressFill = new Region();
-        progressFill.setPrefHeight(7);
-        progressFill.setStyle("-fx-background-color: " + accentColor + "; -fx-background-radius: 4;");
-        progressFill.setMaxWidth(Double.MAX_VALUE);
-        javafx.geometry.Pos fillPos = javafx.geometry.Pos.CENTER_LEFT;
-        StackPane.setAlignment(progressFill, fillPos);
-
-        double finalProgressVal = progressVal;
-        progressTrack.widthProperty().addListener((obs, oldW, newW) ->
-            progressFill.setPrefWidth(newW.doubleValue() * finalProgressVal)
-        );
-        progressTrack.getChildren().add(progressFill);
-
-        body.getChildren().addAll(title, deadline, members, progressHeader, progressTrack);
+        body.getChildren().addAll(title, deadline, members, progressHeader, progressBar);
 
         if (project.getOverdueTaskCount() > 0) {
             Label overdueLabel = new Label("  " + project.getOverdueTaskCount() + " task overdue");

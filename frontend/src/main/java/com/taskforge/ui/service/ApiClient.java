@@ -73,7 +73,28 @@ public class ApiClient {
 
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         JavaType type = MAPPER.getTypeFactory().constructParametricType(ApiResponse.class, responseType);
-        return MAPPER.readValue(response.body(), type);
+        try {
+            return MAPPER.readValue(response.body(), type);
+        } catch (Exception e) {
+            throw new Exception("Gagal upload foto (HTTP " + response.statusCode() + ")");
+        }
+    }
+
+    /** Fetch raw bytes dari endpoint yang membutuhkan autentikasi (misalnya: foto profil). */
+    public static byte[] getBytes(String path) throws Exception {
+        String token = SessionManager.getInstance().getToken();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + path))
+                .header("Accept", "image/*, application/octet-stream")
+                .header("Authorization", token != null ? "Bearer " + token : "")
+                .timeout(Duration.ofSeconds(30))
+                .GET()
+                .build();
+        HttpResponse<byte[]> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofByteArray());
+        if (response.statusCode() >= 400) {
+            throw new Exception("HTTP " + response.statusCode() + " saat mengambil foto");
+        }
+        return response.body();
     }
 
     private static byte[] buildMultipartBody(String boundary, String fieldName,
@@ -107,6 +128,12 @@ public class ApiClient {
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         JavaType type = MAPPER.getTypeFactory()
                 .constructParametricType(ApiResponse.class, responseType);
-        return MAPPER.readValue(response.body(), type);
+        try {
+            return MAPPER.readValue(response.body(), type);
+        } catch (Exception e) {
+            String body = response.body();
+            String preview = body != null ? body.substring(0, Math.min(200, body.length())) : "";
+            throw new Exception("Respons tidak valid dari server (HTTP " + response.statusCode() + "): " + preview);
+        }
     }
 }
