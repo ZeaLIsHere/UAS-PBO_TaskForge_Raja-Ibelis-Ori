@@ -7,7 +7,11 @@
 |---|---|
 | **LINK YOUTUBE** | 1.0 |
 | **Nama Kelompok** | Raja Iblis Ori |
-| **Anggota Kelompok** | Tariq Rahmadari  (241401021),  Blessly Victory Deo Silaban (241401060),  Muhammad Al Farel Azhar (241401009)),  Gregorian Goclio Sinaga (241401087), Deofajar Jhonropinus Situmorang (241401102)|
+| **Anggota Kelompok** | Tariq Rahmadari  (241401021),
+Blessly Victory Deo Silaban (241401060), 
+Muhammad Al Farel Azhar (241401009)), 
+Gregorian Goclio Sinaga (241401087),
+Deofajar Jhonropinus Situmorang (241401102)|
 | **Mata Kuliah** | Pemrograman Berbasis Objek (PBO) |
 | **Institusi** | [UNIVERSITAS SUMATERA UTARA] |
 | **ASLAB** | [BANG ANDRE] |
