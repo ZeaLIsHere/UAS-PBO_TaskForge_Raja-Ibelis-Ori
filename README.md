@@ -5,15 +5,13 @@
 
 | | |
 |---|---|
-| **Versi Dokumen** | 1.0 |
-| **Tanggal** | [GANTI_TANGGAL_HARI_INI] |
-| **Status** | Draft |
-| **Dibuat oleh** | [GANTI_NAMA_KETUA_KELOMPOK] |
-| **Anggota Kelompok** | [GANTI_NAMA_ANGGOTA_1], [GANTI_NAMA_ANGGOTA_2], [GANTI_NAMA_ANGGOTA_3] |
+| **LINK YOUTUBE** | 1.0 |
+| **Nama Kelompok** | [Raja Iblis Ori] |
+| **Anggota Kelompok** | [Tariq Rahmadari  (241401021)], [], [Blessly Victory Deo Silaban (241401060)],  [Blessly Victory Deo Silaban (241401060)],  [Muhammad Al Farel Azhar (241401009))],  [Gregorian Goclio Sinaga (241401087)], [Deofajar Jhonropinus Situmorang (241401102)]|
 | **Mata Kuliah** | Pemrograman Berbasis Objek (PBO) |
-| **Institusi** | [GANTI_NAMA_KAMPUS] |
-| **Dosen Pengampu** | [GANTI_NAMA_DOSEN] |
-| **Referensi PRD** | PRD_TaskForge v1.0 |
+| **Institusi** | [UNIVERSITAS SUMATERA UTARA] |
+| **ASLAB** | [BANG ANDRE] |
+
 
 ---
 
