@@ -10,18 +10,6 @@
 
     <VBox alignment="CENTER" spacing="0" maxWidth="400">
 
-        <!-- Logo -->
-        <VBox alignment="CENTER" spacing="6" style="-fx-padding: 0 0 24 0;">
-            <HBox alignment="CENTER" spacing="10">
-                <Label text="⬡"
-                       style="-fx-font-size: 26px; -fx-text-fill: #4F46E5;"/>
-                <Label text="TaskForge"
-                       style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1E293B;"/>
-            </HBox>
-            <Label text="Buat akun untuk bergabung"
-                   style="-fx-font-size: 13px; -fx-text-fill: #94A3B8;"/>
-        </VBox>
-
         <!-- Card -->
         <VBox styleClass="form-card" spacing="14">
             <padding>
