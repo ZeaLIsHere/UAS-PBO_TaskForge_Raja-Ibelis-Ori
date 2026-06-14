@@ -10,77 +10,53 @@
 
     <!-- ==================== SIDEBAR ==================== -->
     <left>
-        <VBox minWidth="220" prefWidth="220" maxWidth="220" spacing="0"
-              style="-fx-background-color: #0F172A;">
-
-            <HBox alignment="CENTER_LEFT" spacing="10"
-                  style="-fx-padding: 16 16 16 16;
-                         -fx-border-color: #1E293B; -fx-border-width: 0 0 1 0;">
-                <ImageView fitWidth="34" fitHeight="34" preserveRatio="true" smooth="true">
+        <VBox minWidth="260" prefWidth="260" maxWidth="260" spacing="0" styleClass="sidebar-root">
+            <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 24 22 18 22;">
+                <ImageView fitWidth="36" fitHeight="36" preserveRatio="true" smooth="true">
                     <image><Image url="@/images/taskforge-icon-48.png"/></image>
                 </ImageView>
-                <HBox spacing="0" alignment="CENTER_LEFT">
-                    <Label text="Task"
-                           style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-                    <Label text="Forge"
-                           style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #6366F1;"/>
-                </HBox>
+                <VBox spacing="0">
+                    <HBox spacing="0" alignment="CENTER_LEFT">
+                        <Label text="Task" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                        <Label text="Forge" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #818CF8;"/>
+                    </HBox>
+                    <Label text="Project Hub Mahasiswa" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                </VBox>
             </HBox>
 
-            <VBox spacing="6"
-                  style="-fx-padding: 16 16 16 16;
-                         -fx-border-color: #1E293B; -fx-border-width: 0 0 1 0;">
-                <StackPane prefWidth="56" prefHeight="56">
-                    <Rectangle width="56" height="56" arcWidth="12" arcHeight="12"
-                               style="-fx-fill: #0F172A;"/>
-                    <Label fx:id="avatarInitials" text="?"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"
-                           StackPane.alignment="CENTER"/>
-                </StackPane>
-
-                <Label text="AKUN SAYA"
-                       style="-fx-font-size: 9px; -fx-font-weight: bold;
-                              -fx-text-fill: #475569; -fx-padding: 6 0 0 0;"/>
-                <Label fx:id="userNameLabel"
-                       style="-fx-font-size: 13px; -fx-font-weight: bold;
-                              -fx-text-fill: #F1F5F9; -fx-wrap-text: true;"
-                       maxWidth="188"/>
-                <Label fx:id="userNimLabel" text=""
-                       style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
-
-                <HBox alignment="CENTER_LEFT">
-                    <Label fx:id="userRoleLabel"
-                           style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #A5B4FC;
-                                  -fx-background-color: #1E1B4B; -fx-background-radius: 20;
-                                  -fx-padding: 3 10 3 10;"/>
+            <VBox spacing="10" styleClass="sidebar-profile-card">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <StackPane prefWidth="44" prefHeight="44">
+                        <Rectangle width="44" height="44" arcWidth="44" arcHeight="44" style="-fx-fill: #4F46E5;"/>
+                        <Label fx:id="avatarInitials" text="?"
+                               style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;"
+                               StackPane.alignment="CENTER"/>
+                    </StackPane>
+                    <VBox spacing="1">
+                        <Label fx:id="userNameLabel"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #F1F5F9;"
+                               maxWidth="150"/>
+                        <Label fx:id="userNimLabel" text="" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                    </VBox>
                 </HBox>
-
+                <HBox alignment="CENTER_LEFT">
+                    <Label fx:id="userRoleLabel" styleClass="role-pill"/>
+                </HBox>
             </VBox>
 
-            <VBox spacing="0">
-                <Label text="WORKSPACE"
-                       style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #475569;
-                              -fx-padding: 16 0 6 20;"/>
-                <Button text="  Dashboard" onAction="#handleDashboard"
-                        styleClass="sidebar-nav-btn"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
-                <Button text="  Proyek"
-                        styleClass="sidebar-nav-btn-active"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
-                <Button text="  Notifikasi" onAction="#handleNotifikasi"
-                        styleClass="sidebar-nav-btn"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
-                <Button text="  Profil" onAction="#handleProfil"
-                        styleClass="sidebar-nav-btn"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
+            <Label text="WORKSPACE"
+                   style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #475569; -fx-padding: 18 0 8 22;"/>
+            <VBox spacing="2" style="-fx-padding: 0 10 0 10;">
+                <Button text="📊   Dashboard" onAction="#handleDashboard" styleClass="nav-item" style="-fx-max-width: Infinity;"/>
+                <Button text="📁   Proyek" styleClass="nav-item-active" style="-fx-max-width: Infinity;"/>
+                <Button text="🔔   Notifikasi" onAction="#handleNotifikasi" styleClass="nav-item" style="-fx-max-width: Infinity;"/>
+                <Button text="👤   Profil" onAction="#handleProfil" styleClass="nav-item" style="-fx-max-width: Infinity;"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
 
-            <VBox style="-fx-border-color: #1E293B; -fx-border-width: 1 0 0 0;">
-                <Button text="  Keluar" onAction="#handleLogout"
-                        styleClass="sidebar-logout-btn"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
+            <VBox style="-fx-border-color: #1E293B; -fx-border-width: 1 0 0 0; -fx-padding: 8 10 14 10;">
+                <Button text="🚪   Keluar" onAction="#handleLogout" styleClass="nav-item-logout" style="-fx-max-width: Infinity;"/>
             </VBox>
         </VBox>
     </left>

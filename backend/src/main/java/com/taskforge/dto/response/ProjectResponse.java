@@ -23,6 +23,7 @@ public class ProjectResponse {
     private int taskCount;
     private int completedTaskCount;
     private int overdueTaskCount;
+    private boolean hasCover;
 
     public static ProjectResponse from(Project project) {
         long total = project.getTasks().size();
@@ -47,6 +48,7 @@ public class ProjectResponse {
                 .taskCount((int) total)
                 .completedTaskCount((int) completed)
                 .overdueTaskCount((int) overdue)
+                .hasCover(project.getCoverPath() != null && !project.getCoverPath().isBlank())
                 .build();
     }
 }

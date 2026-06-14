@@ -1,7 +1,6 @@
 package com.taskforge.service;
 
 import com.taskforge.dto.response.ScoreResponse;
-import com.taskforge.interfaces.Reportable;
 import com.taskforge.model.ContributionScore;
 import com.taskforge.report.ContributionReport;
 import com.taskforge.report.ProjectSummaryReport;

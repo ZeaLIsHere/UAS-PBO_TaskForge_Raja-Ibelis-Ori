@@ -7,6 +7,7 @@ import com.taskforge.ui.model.ProfileUpdateModel;
 import com.taskforge.ui.model.UserModel;
 import com.taskforge.ui.service.ApiClient;
 import com.taskforge.ui.session.SessionManager;
+import com.taskforge.ui.util.Dialogs;
 import com.taskforge.ui.util.SceneNavigator;
 import com.taskforge.ui.util.SidebarProfileBinder;
 import javafx.application.Platform;
@@ -14,7 +15,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
@@ -194,6 +194,7 @@ public class ProfilController {
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         dialog.getDialogPane().setPrefWidth(440);
+        Dialogs.style(dialog);
 
         dialog.showAndWait().ifPresent(result -> {
             if (result != ButtonType.OK) return;

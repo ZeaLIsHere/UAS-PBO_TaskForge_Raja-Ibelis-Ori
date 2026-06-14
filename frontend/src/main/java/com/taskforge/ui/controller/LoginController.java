@@ -75,7 +75,6 @@ public class LoginController {
         try {
             Stage stage = (Stage) loginButton.getScene().getWindow();
             SceneNavigator.navigate(stage, "/fxml/register.fxml", "TaskForge — Daftar Akun", 420, 520);
-            stage.setResizable(false);
         } catch (Exception e) {
             showError("Gagal membuka halaman registrasi");
         }

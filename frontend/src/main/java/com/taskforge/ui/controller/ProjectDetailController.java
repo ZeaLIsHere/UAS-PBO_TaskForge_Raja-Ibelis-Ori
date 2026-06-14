@@ -7,6 +7,7 @@ import com.taskforge.ui.model.ProjectModel;
 import com.taskforge.ui.model.UserModel;
 import com.taskforge.ui.service.ApiClient;
 import com.taskforge.ui.session.SessionManager;
+import com.taskforge.ui.util.Dialogs;
 import com.taskforge.ui.util.SceneNavigator;
 import com.taskforge.ui.util.SidebarProfileBinder;
 import javafx.application.Platform;
@@ -40,6 +41,7 @@ public class ProjectDetailController {
     @FXML private Button reportButton;
     @FXML private Button addMemberButton;
     @FXML private VBox membersPane;
+    @FXML private VBox infoCard;
     @FXML private ProgressIndicator loadingIndicator;
     @FXML private Label statusLabel;
 
@@ -98,6 +100,14 @@ public class ProjectDetailController {
 
     private void renderProjectDetail() {
         projectTitleLabel.setText(currentProject.getTitle());
+
+        // Foto sampul (jika ada) di paling atas kartu info
+        infoCard.getChildren().removeIf(n -> "cover".equals(n.getId()));
+        if (currentProject.isHasCover()) {
+            var cover = com.taskforge.ui.util.CoverLoader.coverNode(currentProject.getId(), 760, 200, 14);
+            cover.setId("cover");
+            infoCard.getChildren().add(0, cover);
+        }
 
         String desc = currentProject.getDescription();
         projectDescLabel.setText(desc != null && !desc.isBlank() ? desc : "Tidak ada deskripsi");
@@ -217,6 +227,7 @@ public class ProjectDetailController {
 
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Dialogs.style(dialog);
 
         dialog.showAndWait().ifPresent(result -> {
             if (result == ButtonType.OK && !emailField.getText().isBlank()) {

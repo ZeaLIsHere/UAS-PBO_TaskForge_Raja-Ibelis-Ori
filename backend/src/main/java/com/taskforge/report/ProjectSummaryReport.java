@@ -46,7 +46,6 @@ public class ProjectSummaryReport extends ReportGenerator<Project> {
                         Collectors.mapping(TaskResponse::from, Collectors.toList())));
 
         var scores = scoreRepository.findByProjectIdOrderByScoreDesc(project.getId());
-        var files = fileRepository.findByTaskIdOrderByUploadedAtDesc(-1L); // placeholder
 
         // Collect files across all tasks
         var allFiles = tasks.stream()

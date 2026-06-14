@@ -10,6 +10,7 @@ public class UserModel {
     private String email;
     private String role;
     private String nim;
+    private String nipm;
     private boolean hasPhoto;
 
     public Long getId() { return id; }
@@ -26,6 +27,9 @@ public class UserModel {
 
     public String getNim() { return nim; }
     public void setNim(String nim) { this.nim = nim; }
+
+    public String getNipm() { return nipm; }
+    public void setNipm(String nipm) { this.nipm = nipm; }
 
     public boolean isHasPhoto() { return hasPhoto; }
     public void setHasPhoto(boolean hasPhoto) { this.hasPhoto = hasPhoto; }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.taskforge.ui.model.ApiResponse;
 import com.taskforge.ui.model.ProjectModel;
 import com.taskforge.ui.service.ApiClient;
+import com.taskforge.ui.session.SessionManager;
 import com.taskforge.ui.util.SceneNavigator;
 import com.taskforge.ui.util.SidebarProfileBinder;
 import javafx.concurrent.Task;
@@ -32,16 +33,14 @@ public class DashboardController {
     @FXML private Label statSelesai;
     @FXML private TextField searchField;
     @FXML private Label avatarInitials;
+    @FXML private Label pageTitle;
+    @FXML private Label pageSubtitle;
+    @FXML private Label sectionTitle;
+    @FXML private Label sectionSubtitle;
+    @FXML private Button primaryActionBtn;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd MMM yyyy");
-
-    private static final String[] ACCENT_COLORS = {
-        "#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"
-    };
-    private static final String[] ACCENT_LIGHT = {
-        "#EEF2FF", "#ECFDF5", "#FFFBEB", "#FEF2F2", "#F5F3FF"
-    };
 
     private List<ProjectModel> allProjects = List.of();
 
@@ -50,7 +49,60 @@ public class DashboardController {
         loadingIndicator.setVisible(false);
         statusLabel.setText("");
         refreshSidebarProfile();
+        applyRoleView();
         loadProjects();
+    }
+
+    // ─── Role-adaptive view ──────────────────────────────────────────────────
+    // Satu dashboard, tampilan berbeda sesuai role (DOSEN/ASDOS/KETUA/ANGGOTA).
+
+    private void applyRoleView() {
+        SessionManager session = SessionManager.getInstance();
+        String name = session.getCurrentUser() != null
+                ? session.getCurrentUser().getName().split("\\s+")[0] : "";
+
+        if (session.isDosen()) {
+            pageTitle.setText("Panel Dosen");
+            pageSubtitle.setText("Pantau seluruh kelompok dan input nilai akhir mahasiswa");
+            sectionTitle.setText("Semua Proyek Akademik");
+            sectionSubtitle.setText("Klik proyek untuk mengawasi & menilai kelompok");
+            showPrimaryAction("+ Buat Proyek");
+        } else if (session.isAsdos()) {
+            pageTitle.setText("Panel Asisten Dosen");
+            pageSubtitle.setText("Pantau progres dan berkas semua kelompok bimbingan");
+            sectionTitle.setText("Semua Kelompok");
+            sectionSubtitle.setText("Klik proyek untuk meninjau progres & artefak");
+            hidePrimaryAction();
+        } else if (session.isKetua()) {
+            pageTitle.setText("Dashboard Ketua");
+            pageSubtitle.setText("Halo " + name + ", kelola proyek dan tim kelompokmu");
+            sectionTitle.setText("Proyek Saya");
+            sectionSubtitle.setText("Klik proyek untuk mengelola tugas & anggota");
+            showPrimaryAction("+ Claim / Buat Proyek");
+        } else { // ANGGOTA
+            pageTitle.setText("Dashboard");
+            pageSubtitle.setText("Halo " + name + ", berikut tugas dan proyek yang kamu ikuti");
+            sectionTitle.setText("Proyek Saya");
+            sectionSubtitle.setText("Klik proyek untuk melihat tugas yang ditugaskan padamu");
+            hidePrimaryAction();
+        }
+    }
+
+    private void showPrimaryAction(String text) {
+        primaryActionBtn.setText(text);
+        primaryActionBtn.setVisible(true);
+        primaryActionBtn.setManaged(true);
+    }
+
+    private void hidePrimaryAction() {
+        primaryActionBtn.setVisible(false);
+        primaryActionBtn.setManaged(false);
+    }
+
+    @FXML
+    public void handlePrimaryAction() {
+        // DOSEN membuat proyek, KETUA claim/buat — keduanya menuju halaman Proyek
+        navigate("/fxml/proyek.fxml", "TaskForge — Proyek");
     }
 
     // ─── Sidebar / Profile ───────────────────────────────────────────────────
@@ -144,80 +196,94 @@ public class DashboardController {
     }
 
     private VBox buildProjectCard(ProjectModel project, int index) {
-        String accentColor = ACCENT_COLORS[index % ACCENT_COLORS.length];
-        String accentLight = ACCENT_LIGHT[index % ACCENT_LIGHT.length];
+        // Tentukan status proyek → warna & label badge
+        int taskCount = project.getTaskCount();
+        int completedCount = project.getCompletedTaskCount();
+        boolean isOverdue = project.getOverdueTaskCount() > 0;
+        boolean isDone = taskCount > 0 && completedCount == taskCount;
 
-        VBox card = new VBox(0);
-        card.setPrefWidth(270);
-        card.setMaxWidth(270);
-        card.setStyle(
-            "-fx-background-color: white; -fx-background-radius: 12px; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 3); -fx-cursor: hand;"
-        );
+        String statusText, badgeBg, badgeFg, accent;
+        if (isOverdue) {
+            statusText = "Terlambat";   badgeBg = "#FEE2E2"; badgeFg = "#DC2626"; accent = "#EF4444";
+        } else if (isDone) {
+            statusText = "Selesai";     badgeBg = "#D1FAE5"; badgeFg = "#059669"; accent = "#10B981";
+        } else {
+            statusText = "Sedang Berjalan"; badgeBg = "#FEF3C7"; badgeFg = "#92400E"; accent = "#4F46E5";
+        }
 
-        HBox accentBar = new HBox();
-        accentBar.setPrefHeight(6);
-        accentBar.setStyle("-fx-background-color: " + accentColor + "; -fx-background-radius: 12px 12px 0 0;");
+        String baseStyle =
+            "-fx-background-color: white; -fx-background-radius: 16px; " +
+            "-fx-border-color: #E2E8F0; -fx-border-radius: 16px; -fx-border-width: 1; " +
+            "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.05), 12, 0, 0, 4); -fx-cursor: hand;";
+        String hoverStyle =
+            "-fx-background-color: white; -fx-background-radius: 16px; " +
+            "-fx-border-color: " + accent + "; -fx-border-radius: 16px; -fx-border-width: 1; " +
+            "-fx-effect: dropshadow(gaussian, rgba(79,70,229,0.16), 18, 0, 0, 6); -fx-cursor: hand;";
 
-        VBox body = new VBox(8);
-        body.setPadding(new Insets(14, 16, 14, 16));
+        VBox card = new VBox(12);
+        card.setPrefWidth(360);
+        card.setMaxWidth(360);
+        card.setPadding(new Insets(20, 22, 18, 22));
+        card.setStyle(baseStyle);
+
+        // Status badge
+        Label badge = new Label(statusText.toUpperCase());
+        badge.setStyle(
+            "-fx-background-color: " + badgeBg + "; -fx-text-fill: " + badgeFg + "; " +
+            "-fx-font-size: 10px; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 4 10 4 10;");
 
         Label title = new Label(project.getTitle());
         title.setWrapText(true);
-        title.setMaxWidth(238);
-        title.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1E293B;");
+        title.setMaxWidth(316);
+        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #191C1E;");
 
-        String deadlineText = project.getDeadline() != null
-                ? "  " + project.getDeadline().format(FMT)
-                : "  Belum ada deadline";
-        Label deadline = new Label(deadlineText);
-        deadline.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748B;");
+        String descText = project.getDescription() != null && !project.getDescription().isBlank()
+                ? project.getDescription() : "Tidak ada deskripsi";
+        Label desc = new Label(descText);
+        desc.setWrapText(true);
+        desc.setMaxWidth(316);
+        desc.setMaxHeight(40);
+        desc.setStyle("-fx-font-size: 13px; -fx-text-fill: #64748B;");
 
-        Label members = new Label("  " + project.getMemberCount() + " anggota");
-        members.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748B;");
-
-        int taskCount = project.getTaskCount();
-        int completedCount = project.getCompletedTaskCount();
+        // Progress
         double progressVal = taskCount == 0 ? 0 : (double) completedCount / taskCount;
         int progressPct = (int) Math.round(progressVal * 100);
-
         HBox progressHeader = new HBox();
         progressHeader.setAlignment(Pos.CENTER_LEFT);
-        Label tasksLabel = new Label(completedCount + "/" + taskCount + " task selesai");
-        tasksLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #64748B;");
+        Label progLabel = new Label("Progress");
+        progLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #94A3B8;");
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         Label pctLabel = new Label(progressPct + "%");
-        pctLabel.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: " + accentColor + ";");
-        progressHeader.getChildren().addAll(tasksLabel, spacer, pctLabel);
+        pctLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: " + accent + ";");
+        progressHeader.getChildren().addAll(progLabel, spacer, pctLabel);
 
         ProgressBar progressBar = new ProgressBar(progressVal);
         progressBar.setMaxWidth(Double.MAX_VALUE);
-        progressBar.setPrefHeight(7);
-        progressBar.setStyle("-fx-accent: " + accentColor + ";");
+        progressBar.setPrefHeight(8);
+        progressBar.setStyle("-fx-accent: " + accent + ";");
 
-        body.getChildren().addAll(title, deadline, members, progressHeader, progressBar);
+        // Footer: anggota + deadline
+        HBox footer = new HBox(10);
+        footer.setAlignment(Pos.CENTER_LEFT);
+        Label members = new Label("👥 " + project.getMemberCount() + " anggota");
+        members.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748B;");
+        Region fSpacer = new Region();
+        HBox.setHgrow(fSpacer, Priority.ALWAYS);
+        String deadlineText = project.getDeadline() != null
+                ? "📅 " + project.getDeadline().format(FMT) : "📅 Tanpa deadline";
+        Label deadline = new Label(deadlineText);
+        deadline.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: "
+                + (isOverdue ? "#DC2626" : "#64748B") + ";");
+        footer.getChildren().addAll(members, fSpacer, deadline);
 
-        if (project.getOverdueTaskCount() > 0) {
-            Label overdueLabel = new Label("  " + project.getOverdueTaskCount() + " task overdue");
-            overdueLabel.setStyle(
-                "-fx-text-fill: #DC2626; -fx-font-size: 11px; -fx-font-weight: bold; " +
-                "-fx-background-color: #FEF2F2; -fx-background-radius: 4px; -fx-padding: 3 8 3 8;"
-            );
-            body.getChildren().add(overdueLabel);
+        if (project.isHasCover()) {
+            card.getChildren().add(com.taskforge.ui.util.CoverLoader.coverNode(project.getId(), 316, 120, 12));
         }
-
-        card.getChildren().addAll(accentBar, body);
+        card.getChildren().addAll(badge, title, desc, progressHeader, progressBar, footer);
         card.setOnMouseClicked(e -> openProjectDetail(project));
-
-        card.setOnMouseEntered(e -> card.setStyle(
-            "-fx-background-color: " + accentLight + "; -fx-background-radius: 12px; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 16, 0, 0, 5); -fx-cursor: hand;"
-        ));
-        card.setOnMouseExited(e -> card.setStyle(
-            "-fx-background-color: white; -fx-background-radius: 12px; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 3); -fx-cursor: hand;"
-        ));
+        card.setOnMouseEntered(e -> card.setStyle(hoverStyle));
+        card.setOnMouseExited(e -> card.setStyle(baseStyle));
 
         return card;
     }

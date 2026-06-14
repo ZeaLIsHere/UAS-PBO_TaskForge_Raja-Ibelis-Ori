@@ -1,6 +1,5 @@
 package com.taskforge.ui.util;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,52 +16,33 @@ public final class SceneNavigator {
         return navigate(stage, fxmlPath, title, defaultWidth, defaultHeight, true);
     }
 
+    // Parameter ukuran & preserveWindowState dipertahankan demi kompatibilitas
+    // pemanggil lama. Semua halaman tampil maximized (full layar).
     public static <T> T navigate(Stage stage, String fxmlPath, String title,
                                  double defaultWidth, double defaultHeight,
                                  boolean preserveWindowState) throws Exception {
-        boolean wasMaximized = stage.isMaximized();
-        boolean wasFullScreen = stage.isFullScreen();
-        double savedWidth = stage.getWidth();
-        double savedHeight = stage.getHeight();
-
         FXMLLoader loader = new FXMLLoader(SceneNavigator.class.getResource(fxmlPath));
         Parent root = loader.load();
-        Scene scene = new Scene(root);
-        applyStylesheet(scene);
-        stage.setScene(scene);
+
+        // Tukar root pada scene yang sudah ada (bukan bikin Scene baru) agar
+        // jendela tidak pernah resize — full layar tetap, tanpa kedip/delay.
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            scene = new Scene(root);
+            applyStylesheet(scene);
+            stage.setScene(scene);
+        } else {
+            applyStylesheet(scene);
+            scene.setRoot(root);
+        }
+
         stage.setTitle(title);
         stage.setResizable(true);
-
-        if (preserveWindowState) {
-            Platform.runLater(() -> restoreWindowState(
-                    stage, wasMaximized, wasFullScreen, savedWidth, savedHeight,
-                    defaultWidth, defaultHeight));
-        } else {
-            Platform.runLater(() -> {
-                stage.setFullScreen(false);
-                stage.setMaximized(false);
-                stage.setWidth(defaultWidth);
-                stage.setHeight(defaultHeight);
-            });
+        if (!stage.isMaximized()) {
+            stage.setMaximized(true);
         }
 
         return loader.getController();
-    }
-
-    private static void restoreWindowState(Stage stage, boolean wasMaximized, boolean wasFullScreen,
-                                           double savedWidth, double savedHeight,
-                                           double defaultWidth, double defaultHeight) {
-        if (wasFullScreen) {
-            stage.setFullScreen(true);
-        } else if (wasMaximized) {
-            stage.setMaximized(true);
-        } else if (savedWidth > 0 && savedHeight > 0) {
-            stage.setWidth(savedWidth);
-            stage.setHeight(savedHeight);
-        } else {
-            stage.setWidth(defaultWidth);
-            stage.setHeight(defaultHeight);
-        }
     }
 
     public static void applyStylesheet(Scene scene) {

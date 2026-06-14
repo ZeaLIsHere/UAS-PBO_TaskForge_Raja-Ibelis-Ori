@@ -13,10 +13,19 @@ public final class SidebarProfileBinder {
                                Label avatarInitials) {
         UserModel user = SessionManager.getInstance().getCurrentUser();
         userNameLabel.setText(user.getName());
-        userRoleLabel.setText(user.getRole());
+        userRoleLabel.setText(roleDisplayName(user.getRole()));
 
-        if (user.getNim() != null && !user.getNim().isBlank()) {
-            userNimLabel.setText("NIM: " + user.getNim());
+        // DOSEN ditandai dengan NIPM, role lain dengan NIM
+        boolean isDosen = "DOSEN".equals(user.getRole());
+        String idText = null;
+        if (isDosen && user.getNipm() != null && !user.getNipm().isBlank()) {
+            idText = "NIPM: " + user.getNipm();
+        } else if (!isDosen && user.getNim() != null && !user.getNim().isBlank()) {
+            idText = "NIM: " + user.getNim();
+        }
+
+        if (idText != null) {
+            userNimLabel.setText(idText);
             userNimLabel.setVisible(true);
             userNimLabel.setManaged(true);
         } else {
@@ -28,12 +37,23 @@ public final class SidebarProfileBinder {
         avatarInitials.setText(getInitials(user.getName()));
     }
 
+    /** Ubah nilai enum role menjadi label yang ramah dibaca pengguna. */
+    public static String roleDisplayName(String role) {
+        if (role == null) return "";
+        return switch (role) {
+            case "KETUA"   -> "Ketua Kelompok";
+            case "ANGGOTA" -> "Anggota Kelompok";
+            case "DOSEN"   -> "Dosen";
+            case "ASDOS"   -> "Asisten Dosen";
+            default        -> role;
+        };
+    }
+
     public static void logout(Label anchor) {
         SessionManager.getInstance().clearSession();
         try {
             Stage stage = (Stage) anchor.getScene().getWindow();
             SceneNavigator.navigate(stage, "/fxml/login.fxml", "TaskForge — Login", 480, 660, false);
-            stage.setResizable(false);
         } catch (Exception e) {
             if (anchor != null) anchor.setText("Gagal logout");
         }

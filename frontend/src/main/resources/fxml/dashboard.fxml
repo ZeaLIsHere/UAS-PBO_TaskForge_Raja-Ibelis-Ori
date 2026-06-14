@@ -7,211 +7,176 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.taskforge.ui.controller.DashboardController"
-            style="-fx-background-color: #F8FAFC;">
+            style="-fx-background-color: #F7F9FB;">
 
     <!-- ==================== SIDEBAR ==================== -->
     <left>
-        <VBox minWidth="220" prefWidth="220" maxWidth="220" spacing="0"
-              style="-fx-background-color: #0F172A;">
+        <VBox minWidth="260" prefWidth="260" maxWidth="260" spacing="0"
+              styleClass="sidebar-root">
 
-            <!-- Logo -->
-            <HBox alignment="CENTER_LEFT" spacing="10"
-                  style="-fx-padding: 16 16 16 16;
-                         -fx-border-color: #1E293B; -fx-border-width: 0 0 1 0;">
-                <ImageView fitWidth="34" fitHeight="34" preserveRatio="true" smooth="true">
+            <!-- Brand -->
+            <HBox alignment="CENTER_LEFT" spacing="12"
+                  style="-fx-padding: 24 22 18 22;">
+                <ImageView fitWidth="36" fitHeight="36" preserveRatio="true" smooth="true">
                     <image><Image url="@/images/taskforge-icon-48.png"/></image>
                 </ImageView>
-                <HBox spacing="0" alignment="CENTER_LEFT">
-                    <Label text="Task"
-                           style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-                    <Label text="Forge"
-                           style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #6366F1;"/>
-                </HBox>
+                <VBox spacing="0">
+                    <HBox spacing="0" alignment="CENTER_LEFT">
+                        <Label text="Task"
+                               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                        <Label text="Forge"
+                               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #818CF8;"/>
+                    </HBox>
+                    <Label text="Project Hub Mahasiswa"
+                           style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                </VBox>
             </HBox>
 
-            <!-- User Profile Section -->
-            <VBox spacing="6"
-                  style="-fx-padding: 16 16 16 16;
-                         -fx-border-color: #1E293B; -fx-border-width: 0 0 1 0;">
-
-                <StackPane prefWidth="56" prefHeight="56">
-                    <Rectangle width="56" height="56" arcWidth="12" arcHeight="12"
-                               style="-fx-fill: #0F172A;"/>
-                    <Label fx:id="avatarInitials" text="?"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"
-                           StackPane.alignment="CENTER"/>
-                </StackPane>
-
-                <Label text="AKUN SAYA"
-                       style="-fx-font-size: 9px; -fx-font-weight: bold;
-                              -fx-text-fill: #475569; -fx-padding: 6 0 0 0;"/>
-                <Label fx:id="userNameLabel"
-                       style="-fx-font-size: 13px; -fx-font-weight: bold;
-                              -fx-text-fill: #F1F5F9; -fx-wrap-text: true;"
-                       maxWidth="188"/>
-                <Label fx:id="userNimLabel" text=""
-                       style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
-
-                <!-- Role badge -->
+            <!-- Profile Card -->
+            <VBox spacing="10" styleClass="sidebar-profile-card">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <StackPane prefWidth="44" prefHeight="44">
+                        <Rectangle width="44" height="44" arcWidth="44" arcHeight="44"
+                                   style="-fx-fill: #4F46E5;"/>
+                        <Label fx:id="avatarInitials" text="?"
+                               style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;"
+                               StackPane.alignment="CENTER"/>
+                    </StackPane>
+                    <VBox spacing="1">
+                        <Label fx:id="userNameLabel"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #F1F5F9;"
+                               maxWidth="150"/>
+                        <Label fx:id="userNimLabel" text=""
+                               style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                    </VBox>
+                </HBox>
                 <HBox alignment="CENTER_LEFT">
                     <Label fx:id="userRoleLabel"
-                           style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #A5B4FC;
-                                  -fx-background-color: #1E1B4B; -fx-background-radius: 20;
-                                  -fx-padding: 3 10 3 10;"/>
+                           styleClass="role-pill"/>
                 </HBox>
-
             </VBox>
 
             <!-- Navigation -->
-            <VBox spacing="0">
-                <Label text="WORKSPACE"
-                       style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #475569;
-                              -fx-padding: 16 0 6 20;"/>
-                <Button text="  Dashboard"
-                        styleClass="sidebar-nav-btn-active"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
-                <Button text="  Proyek" onAction="#handleProyek"
-                        styleClass="sidebar-nav-btn"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
-                <Button text="  Notifikasi" onAction="#handleNotifikasi"
-                        styleClass="sidebar-nav-btn"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
-                <Button text="  Profil" onAction="#handleProfil"
-                        styleClass="sidebar-nav-btn"
-                        style="-fx-max-width: Infinity; -fx-pref-width: 220;"/>
+            <Label text="WORKSPACE"
+                   style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #475569;
+                          -fx-padding: 18 0 8 22;"/>
+            <VBox spacing="2" style="-fx-padding: 0 10 0 10;">
+                <Button text="📊   Dashboard"
+                        styleClass="nav-item-active"
+                        style="-fx-max-width: Infinity;"/>
+                <Button text="📁   Proyek" onAction="#handleProyek"
+                        styleClass="nav-item"
+                        style="-fx-max-width: Infinity;"/>
+                <Button text="🔔   Notifikasi" onAction="#handleNotifikasi"
+                        styleClass="nav-item"
+                        style="-fx-max-width: Infinity;"/>
+                <Button text="👤   Profil" onAction="#handleProfil"
+                        styleClass="nav-item"
+                        style="-fx-max-width: Infinity;"/>
             </VBox>
 
-            <!-- Spacer -->
             <Region VBox.vgrow="ALWAYS"/>
 
             <!-- Logout -->
-            <VBox style="-fx-border-color: #1E293B; -fx-border-width: 1 0 0 0;">
-                <Button text="  Keluar" onAction="#handleLogout"
-                        style="-fx-background-color: transparent; -fx-text-fill: #F87171;
-                               -fx-font-size: 13px; -fx-alignment: CENTER_LEFT;
-                               -fx-padding: 13 16 13 20; -fx-background-radius: 0;
-                               -fx-cursor: hand; -fx-max-width: Infinity; -fx-pref-width: 220;"/>
+            <VBox style="-fx-border-color: #1E293B; -fx-border-width: 1 0 0 0; -fx-padding: 8 10 14 10;">
+                <Button text="🚪   Keluar" onAction="#handleLogout"
+                        styleClass="nav-item-logout"
+                        style="-fx-max-width: Infinity;"/>
             </VBox>
         </VBox>
     </left>
 
     <!-- ==================== MAIN CONTENT ==================== -->
     <center>
-        <VBox spacing="0" style="-fx-background-color: #F8FAFC;">
+        <VBox spacing="0" style="-fx-background-color: #F7F9FB;">
 
-            <!-- Top Bar -->
+            <!-- Header -->
             <HBox alignment="CENTER_LEFT" spacing="12"
-                  style="-fx-padding: 16 28 14 28; -fx-background-color: white;
-                         -fx-border-color: #E2E8F0; -fx-border-width: 0 0 1 0;
-                         -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.04), 4, 0, 0, 2);">
-                <VBox spacing="2">
-                    <Label text="Dashboard"
-                           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #0F172A;"/>
-                    <Label text="Kelola semua proyek kelompok kamu di sini"
-                           style="-fx-font-size: 12px; -fx-text-fill: #94A3B8;"/>
+                  style="-fx-padding: 28 36 18 36;">
+                <VBox spacing="3">
+                    <Label fx:id="pageTitle" text="Dashboard Ketua"
+                           style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #191C1E;"/>
+                    <Label fx:id="pageSubtitle" text="Selamat datang kembali di pusat kendali akademikmu."
+                           style="-fx-font-size: 14px; -fx-text-fill: #464555;"/>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="primaryActionBtn" visible="false" managed="false"
+                        onAction="#handlePrimaryAction"
+                        styleClass="primary-button"
+                        style="-fx-pref-height: 44; -fx-font-size: 14px; -fx-padding: 0 22 0 22;
+                               -fx-background-radius: 12;"/>
             </HBox>
 
             <ScrollPane fitToWidth="true"
                         style="-fx-background: transparent; -fx-background-color: transparent;"
                         VBox.vgrow="ALWAYS">
-                <VBox spacing="20" style="-fx-padding: 24 28 28 28;">
+                <VBox spacing="28" style="-fx-padding: 4 36 32 36;">
 
                     <!-- Stat Cards -->
-                    <HBox spacing="16" alignment="CENTER_LEFT">
+                    <HBox spacing="24" alignment="CENTER_LEFT">
 
                         <!-- Total Proyek -->
-                        <VBox spacing="0"
-                              style="-fx-background-color: white; -fx-background-radius: 14;
-                                     -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.07), 10, 0, 0, 3);
-                                     -fx-pref-width: 185; -fx-min-width: 155;
-                                     -fx-border-color: #E2E8F0; -fx-border-radius: 14; -fx-border-width: 1;">
-                            <Region style="-fx-background-color: #4F46E5;
-                                          -fx-background-radius: 14 14 0 0;
-                                          -fx-min-height: 4; -fx-max-height: 4;"/>
-                            <VBox spacing="4" style="-fx-padding: 16 20 18 20;">
-                                <Label text="TOTAL PROYEK"
-                                       style="-fx-font-size: 10px; -fx-font-weight: bold;
-                                              -fx-text-fill: #94A3B8;"/>
+                        <HBox styleClass="stat-card" style="-fx-border-color: #4F46E5;"
+                              HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="12">
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="TOTAL PROYEK" styleClass="stat-card-label"/>
                                 <Label fx:id="statTotalProyek" text="0"
-                                       style="-fx-font-size: 32px; -fx-font-weight: bold;
-                                              -fx-text-fill: #4F46E5;"/>
-                                <Label text="Proyek Aktif"
-                                       style="-fx-font-size: 12px; -fx-text-fill: #94A3B8;"/>
+                                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #191C1E;"/>
                             </VBox>
-                        </VBox>
+                            <Label text="📦" styleClass="stat-icon"
+                                   style="-fx-background-color: #EEF2FF;"/>
+                        </HBox>
 
-                        <!-- Task Overdue -->
-                        <VBox spacing="0"
-                              style="-fx-background-color: white; -fx-background-radius: 14;
-                                     -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.07), 10, 0, 0, 3);
-                                     -fx-pref-width: 185; -fx-min-width: 155;
-                                     -fx-border-color: #E2E8F0; -fx-border-radius: 14; -fx-border-width: 1;">
-                            <Region style="-fx-background-color: #EF4444;
-                                          -fx-background-radius: 14 14 0 0;
-                                          -fx-min-height: 4; -fx-max-height: 4;"/>
-                            <VBox spacing="4" style="-fx-padding: 16 20 18 20;">
-                                <Label text="TERLAMBAT"
-                                       style="-fx-font-size: 10px; -fx-font-weight: bold;
-                                              -fx-text-fill: #94A3B8;"/>
+                        <!-- Terlambat -->
+                        <HBox styleClass="stat-card" style="-fx-border-color: #EF4444;"
+                              HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="12">
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="TERLAMBAT" styleClass="stat-card-label"/>
                                 <Label fx:id="statOverdue" text="0"
-                                       style="-fx-font-size: 32px; -fx-font-weight: bold;
-                                              -fx-text-fill: #EF4444;"/>
-                                <Label text="Task Overdue"
-                                       style="-fx-font-size: 12px; -fx-text-fill: #94A3B8;"/>
+                                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #EF4444;"/>
                             </VBox>
-                        </VBox>
+                            <Label text="⏰" styleClass="stat-icon"
+                                   style="-fx-background-color: #FEF2F2;"/>
+                        </HBox>
 
-                        <!-- Task Selesai -->
-                        <VBox spacing="0"
-                              style="-fx-background-color: white; -fx-background-radius: 14;
-                                     -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.07), 10, 0, 0, 3);
-                                     -fx-pref-width: 185; -fx-min-width: 155;
-                                     -fx-border-color: #E2E8F0; -fx-border-radius: 14; -fx-border-width: 1;">
-                            <Region style="-fx-background-color: #10B981;
-                                          -fx-background-radius: 14 14 0 0;
-                                          -fx-min-height: 4; -fx-max-height: 4;"/>
-                            <VBox spacing="4" style="-fx-padding: 16 20 18 20;">
-                                <Label text="SELESAI"
-                                       style="-fx-font-size: 10px; -fx-font-weight: bold;
-                                              -fx-text-fill: #94A3B8;"/>
+                        <!-- Selesai -->
+                        <HBox styleClass="stat-card" style="-fx-border-color: #10B981;"
+                              HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="12">
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="SELESAI" styleClass="stat-card-label"/>
                                 <Label fx:id="statSelesai" text="0"
-                                       style="-fx-font-size: 32px; -fx-font-weight: bold;
-                                              -fx-text-fill: #10B981;"/>
-                                <Label text="Task Selesai"
+                                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #10B981;"/>
+                            </VBox>
+                            <Label text="✅" styleClass="stat-icon"
+                                   style="-fx-background-color: #ECFDF5;"/>
+                        </HBox>
+                    </HBox>
+
+                    <!-- Projects Section -->
+                    <VBox spacing="14">
+                        <HBox alignment="CENTER_LEFT" spacing="12">
+                            <VBox spacing="2">
+                                <Label fx:id="sectionTitle" text="Proyek Aktif"
+                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #191C1E;"/>
+                                <Label fx:id="sectionSubtitle" text="Klik proyek untuk mengelola tugas &amp; anggota"
                                        style="-fx-font-size: 12px; -fx-text-fill: #94A3B8;"/>
                             </VBox>
-                        </VBox>
-                    </HBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="searchField" promptText="Cari proyek..."
+                                       onKeyReleased="#handleSearch"
+                                       style="-fx-background-color: white; -fx-border-color: #E2E8F0;
+                                              -fx-border-radius: 12; -fx-background-radius: 12;
+                                              -fx-pref-height: 40; -fx-font-size: 13px;
+                                              -fx-padding: 0 16 0 16; -fx-pref-width: 280;"/>
+                        </HBox>
 
-                    <!-- Section Header -->
-                    <HBox alignment="CENTER_LEFT" spacing="12"
-                          style="-fx-padding: 4 0 0 0;">
-                        <VBox spacing="2">
-                            <Label text="Proyek Saya"
-                                   style="-fx-font-size: 16px; -fx-font-weight: bold;
-                                          -fx-text-fill: #1E293B;"/>
-                            <Label text="Klik proyek untuk melihat detail"
-                                   style="-fx-font-size: 11px; -fx-text-fill: #94A3B8;"/>
-                        </VBox>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <TextField fx:id="searchField" promptText="Cari proyek..."
-                                   onKeyReleased="#handleSearch"
-                                   style="-fx-background-color: white; -fx-border-color: #E2E8F0;
-                                          -fx-border-radius: 10; -fx-background-radius: 10;
-                                          -fx-pref-height: 36; -fx-font-size: 13px;
-                                          -fx-padding: 0 14 0 14; -fx-pref-width: 260;"/>
-                    </HBox>
+                        <ProgressIndicator fx:id="loadingIndicator"
+                                           prefWidth="36" prefHeight="36" visible="false"/>
+                        <Label fx:id="statusLabel"
+                               style="-fx-text-fill: #EF4444; -fx-font-size: 13px;"/>
 
-                    <!-- Loading / Status -->
-                    <ProgressIndicator fx:id="loadingIndicator"
-                                       prefWidth="36" prefHeight="36" visible="false"/>
-                    <Label fx:id="statusLabel"
-                           style="-fx-text-fill: #EF4444; -fx-font-size: 13px;"/>
-
-                    <!-- Project Cards Grid -->
-                    <FlowPane fx:id="projectsPane" hgap="18" vgap="18"/>
+                        <FlowPane fx:id="projectsPane" hgap="24" vgap="24"/>
+                    </VBox>
 
                 </VBox>
             </ScrollPane>

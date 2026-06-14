@@ -476,3 +476,250 @@
 .page-bg {
     -fx-background-color: #F8FAFC;
 }
+
+/* ==================== DASHBOARD (Stitch redesign) ==================== */
+.sidebar-root {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #0F172A, #1E293B);
+}
+
+.sidebar-profile-card {
+    -fx-background-color: rgba(30,41,59,0.55);
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(51,65,85,0.6);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-padding: 14 14 14 14;
+}
+
+.role-pill {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #C7D2FE;
+    -fx-background-color: rgba(79,70,229,0.22);
+    -fx-background-radius: 6;
+    -fx-padding: 3 10 3 10;
+}
+
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12 16 12 16;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.nav-item:hover {
+    -fx-background-color: #1E293B;
+    -fx-text-fill: #E2E8F0;
+}
+
+.nav-item-active {
+    -fx-background-color: #4F46E5;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12 16 12 16;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.nav-item-logout {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12 16 12 16;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.nav-item-logout:hover {
+    -fx-background-color: rgba(239,68,68,0.12);
+    -fx-text-fill: #F87171;
+}
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16 16 16 16;
+    -fx-border-width: 4 0 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.05), 14, 0, 0, 4);
+    -fx-padding: 18 22 18 22;
+    -fx-pref-width: 240;
+    -fx-min-width: 180;
+}
+
+.stat-card-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #94A3B8;
+}
+
+.stat-icon {
+    -fx-font-size: 22px;
+    -fx-min-width: 48;
+    -fx-min-height: 48;
+    -fx-pref-width: 48;
+    -fx-pref-height: 48;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 24;
+}
+
+.activity-container {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.05), 14, 0, 0, 4);
+}
+
+.activity-row {
+    -fx-padding: 16 18 16 18;
+}
+
+.activity-row:hover {
+    -fx-background-color: #F7F9FB;
+}
+
+.activity-icon {
+    -fx-font-size: 18px;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 20;
+}
+
+/* ==================== KANBAN (Stitch redesign) ==================== */
+.kanban-col {
+    -fx-background-color: #EEF0F3;
+    -fx-background-radius: 14;
+    -fx-padding: 14 12 16 12;
+}
+
+.kanban-count {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #64748B;
+    -fx-background-color: #E2E8F0;
+    -fx-background-radius: 6;
+    -fx-padding: 1 8 1 8;
+}
+
+/* ==================== DIALOG / NOTIFIKASI ==================== */
+.taskforge-dialog {
+    -fx-background-color: white;
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.22), 32, 0, 0, 10);
+}
+
+/* Header bar dengan aksen indigo */
+.taskforge-dialog > .header-panel {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, #4F46E5, #6366F1);
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 18 26 18 26;
+}
+
+.taskforge-dialog > .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+/* Sembunyikan ikon default JavaFX (info/warning/error) — header sudah cukup */
+.taskforge-dialog > .header-panel > .graphic-container {
+    -fx-padding: 0;
+}
+
+.taskforge-dialog > .header-panel .graphic-container .image-view {
+    -fx-scale-x: 0;
+    -fx-scale-y: 0;
+}
+
+/* Area konten */
+.taskforge-dialog > .content,
+.taskforge-dialog .content.label {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: #334155;
+    -fx-padding: 24 26 22 26;
+    -fx-wrap-text: true;
+}
+
+/* Field di dalam dialog form */
+.taskforge-dialog .text-field,
+.taskforge-dialog .text-area,
+.taskforge-dialog .combo-box,
+.taskforge-dialog .date-picker,
+.taskforge-dialog .spinner {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+}
+
+.taskforge-dialog .text-area .content {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 8;
+}
+
+.taskforge-dialog .text-field:focused,
+.taskforge-dialog .text-area:focused,
+.taskforge-dialog .combo-box:focused {
+    -fx-border-color: #4F46E5;
+}
+
+/* Button bar */
+.taskforge-dialog > .button-bar {
+    -fx-padding: 8 22 18 22;
+}
+
+.taskforge-dialog .button-bar .button {
+    -fx-background-color: white;
+    -fx-text-fill: #475569;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 38;
+    -fx-padding: 0 20 0 20;
+    -fx-background-radius: 9;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 9;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.taskforge-dialog .button-bar .button:hover {
+    -fx-background-color: #F1F5F9;
+    -fx-border-color: #CBD5E1;
+}
+
+/* Tombol utama (default) di-highlight indigo */
+.taskforge-dialog .button-bar .button:default {
+    -fx-background-color: #4F46E5;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.taskforge-dialog .button-bar .button:default:hover {
+    -fx-background-color: #4338CA;
+}
+
+/* Label form (untuk dialog kustom) */
+.dialog-form-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+}
+
+.dialog-form-hint {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94A3B8;
+}

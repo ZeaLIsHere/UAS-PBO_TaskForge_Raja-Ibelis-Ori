@@ -36,6 +36,9 @@ public class Project {
     @Builder.Default
     private Integer maxMembers = 4;
 
+    @Column(name = "cover_path", length = 500)
+    private String coverPath;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

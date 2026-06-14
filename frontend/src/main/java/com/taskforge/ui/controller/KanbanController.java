@@ -8,7 +8,9 @@ import com.taskforge.ui.model.ProjectModel;
 import com.taskforge.ui.model.TaskModel;
 import com.taskforge.ui.model.UserModel;
 import com.taskforge.ui.service.ApiClient;
+import com.taskforge.ui.util.Dialogs;
 import com.taskforge.ui.util.SceneNavigator;
+import com.taskforge.ui.util.SidebarProfileBinder;
 import com.taskforge.ui.session.SessionManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -38,6 +40,16 @@ public class KanbanController {
     @FXML private VBox inProgressColumn;
     @FXML private VBox reviewColumn;
     @FXML private VBox doneColumn;
+    @FXML private Label todoCount;
+    @FXML private Label inProgressCount;
+    @FXML private Label reviewCount;
+    @FXML private Label doneCount;
+
+    // Sidebar profil (mengikuti dashboard)
+    @FXML private Label avatarInitials;
+    @FXML private Label userNameLabel;
+    @FXML private Label userNimLabel;
+    @FXML private Label userRoleLabel;
 
     private ProjectModel currentProject;
     private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -45,6 +57,8 @@ public class KanbanController {
     public void initWithProject(ProjectModel project) {
         this.currentProject = project;
         projectTitleLabel.setText(project.getTitle());
+
+        SidebarProfileBinder.refresh(userNameLabel, userNimLabel, userRoleLabel, avatarInitials);
 
         boolean isKetua = SessionManager.getInstance().isKetua();
         addTaskButton.setVisible(isKetua);
@@ -104,10 +118,20 @@ public class KanbanController {
         Map<String, List<TaskModel>> byStatus = tasks.stream()
                 .collect(Collectors.groupingBy(TaskModel::getStatus));
 
-        addTaskCards(todoColumn, byStatus.getOrDefault("TODO", List.of()));
-        addTaskCards(inProgressColumn, byStatus.getOrDefault("IN_PROGRESS", List.of()));
-        addTaskCards(reviewColumn, byStatus.getOrDefault("REVIEW", List.of()));
-        addTaskCards(doneColumn, byStatus.getOrDefault("DONE", List.of()));
+        List<TaskModel> todo = byStatus.getOrDefault("TODO", List.of());
+        List<TaskModel> inProgress = byStatus.getOrDefault("IN_PROGRESS", List.of());
+        List<TaskModel> review = byStatus.getOrDefault("REVIEW", List.of());
+        List<TaskModel> done = byStatus.getOrDefault("DONE", List.of());
+
+        addTaskCards(todoColumn, todo);
+        addTaskCards(inProgressColumn, inProgress);
+        addTaskCards(reviewColumn, review);
+        addTaskCards(doneColumn, done);
+
+        todoCount.setText(String.valueOf(todo.size()));
+        inProgressCount.setText(String.valueOf(inProgress.size()));
+        reviewCount.setText(String.valueOf(review.size()));
+        doneCount.setText(String.valueOf(done.size()));
     }
 
     private void addTaskCards(VBox column, List<TaskModel> tasks) {
@@ -117,43 +141,102 @@ public class KanbanController {
     }
 
     private VBox buildTaskCard(TaskModel task) {
-        VBox card = new VBox(6);
-        card.setPadding(new Insets(10, 12, 10, 12));
+        boolean isDone = "DONE".equals(task.getStatus());
+        boolean isOverdue = task.isOverdue();
+
+        // Warna aksen atas kartu berdasarkan status
+        String accent = switch (task.getStatus()) {
+            case "IN_PROGRESS" -> "#4F46E5";
+            case "REVIEW" -> "#F59E0B";
+            case "DONE" -> "#10B981";
+            default -> "#94A3B8";
+        };
+
+        VBox card = new VBox(10);
+        card.setPadding(new Insets(14, 16, 14, 16));
         card.setMaxWidth(Double.MAX_VALUE);
 
-        // Overdue styling
-        if (task.isOverdue()) {
-            card.getStyleClass().addAll("task-card", "task-card-overdue");
+        String base;
+        if (isOverdue) {
+            base = "-fx-background-color: #FFF5F5; -fx-background-radius: 12; " +
+                   "-fx-border-color: #EF4444; -fx-border-radius: 12; -fx-border-width: 2; " +
+                   "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.05), 8, 0, 0, 3);";
         } else {
-            card.getStyleClass().add("task-card");
+            base = "-fx-background-color: white; -fx-background-radius: 12; " +
+                   "-fx-border-color: " + accent + " #E2E8F0 #E2E8F0 #E2E8F0; " +
+                   "-fx-border-radius: 12; -fx-border-width: 4 1 1 1; " +
+                   "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.05), 8, 0, 0, 3);";
+        }
+        if (isDone) base += " -fx-opacity: 0.8;";
+        card.setStyle(base);
+
+        // Top row: badge tipe (kiri) + prioritas / centang done (kanan)
+        HBox topRow = new HBox(6);
+        topRow.setAlignment(Pos.CENTER_LEFT);
+        Label typeBadge = new Label("MILESTONE".equals(task.getTaskType()) ? "MILESTONE" : "TASK");
+        typeBadge.setStyle("MILESTONE".equals(task.getTaskType())
+                ? "-fx-background-color: #F3E8FF; -fx-text-fill: #7E22CE; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 2 7 2 7;"
+                : "-fx-background-color: #DBEAFE; -fx-text-fill: #1D4ED8; -fx-font-size: 9px; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 2 7 2 7;");
+        Region topSpacer = new Region();
+        HBox.setHgrow(topSpacer, Priority.ALWAYS);
+        topRow.getChildren().addAll(typeBadge, topSpacer);
+        if (isDone) {
+            Label check = new Label("✓");
+            check.setStyle("-fx-background-color: #D1FAE5; -fx-text-fill: #059669; -fx-font-size: 11px; "
+                    + "-fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 1 7 1 7;");
+            topRow.getChildren().add(check);
+        } else {
+            Label priorityBadge = new Label(task.getPriority());
+            priorityBadge.getStyleClass().add(switch (task.getPriority()) {
+                case "HIGH" -> "badge-high";
+                case "MEDIUM" -> "badge-medium";
+                default -> "badge-low";
+            });
+            topRow.getChildren().add(priorityBadge);
         }
 
-        // Priority badge + Title row
-        HBox titleRow = new HBox(6);
-        titleRow.setAlignment(Pos.CENTER_LEFT);
-        Label priorityBadge = new Label(task.getPriority());
-        priorityBadge.getStyleClass().add(switch (task.getPriority()) {
-            case "HIGH" -> "badge-high";
-            case "MEDIUM" -> "badge-medium";
-            default -> "badge-low";
-        });
+        // Judul
         Label titleLabel = new Label(task.getTitle());
-        titleLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1F2937; -fx-wrap-text: true;");
-        titleLabel.setMaxWidth(170);
-        titleRow.getChildren().addAll(priorityBadge, titleLabel);
+        titleLabel.setWrapText(true);
+        titleLabel.setMaxWidth(250);
+        titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #191C1E;"
+                + (isDone ? " -fx-strikethrough: true; -fx-text-fill: #64748B;" : ""));
 
-        // Assignee
-        Label assigneeLabel = new Label("👤 " + task.getAssigneeName());
-        assigneeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #6B7280;");
+        // Deskripsi (maks 2 baris)
+        String descText = task.getDescription() != null && !task.getDescription().isBlank()
+                ? task.getDescription() : "Tidak ada deskripsi";
+        Label descLabel = new Label(descText);
+        descLabel.setWrapText(true);
+        descLabel.setMaxWidth(250);
+        descLabel.setMaxHeight(38);
+        descLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748B;");
 
-        // Deadline
-        String deadlineStyle = task.isOverdue()
-                ? "-fx-font-size: 11px; -fx-text-fill: #DC2626; -fx-font-weight: bold;"
-                : "-fx-font-size: 11px; -fx-text-fill: #6B7280;";
-        Label deadlineLabel = new Label("📅 " + task.getDeadlineLabel());
-        deadlineLabel.setStyle(deadlineStyle);
+        // Footer: avatar assignee + deadline / status
+        HBox footer = new HBox(8);
+        footer.setAlignment(Pos.CENTER_LEFT);
+        Label avatar = new Label(SidebarProfileBinder.getInitials(task.getAssigneeName()));
+        avatar.setMinSize(26, 26);
+        avatar.setPrefSize(26, 26);
+        avatar.setAlignment(Pos.CENTER);
+        avatar.setStyle("-fx-background-color: #E0E7FF; -fx-text-fill: #4338CA; -fx-font-size: 10px; "
+                + "-fx-font-weight: bold; -fx-background-radius: 20;");
+        Region fSpacer = new Region();
+        HBox.setHgrow(fSpacer, Priority.ALWAYS);
 
-        card.getChildren().addAll(titleRow, assigneeLabel, deadlineLabel);
+        Label rightChip;
+        if (isOverdue) {
+            rightChip = new Label("⚠ " + task.getDeadlineLabel());
+            rightChip.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #DC2626;");
+        } else if (isDone) {
+            rightChip = new Label("✓ Selesai");
+            rightChip.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #059669;");
+        } else {
+            rightChip = new Label("📅 " + task.getDeadlineLabel());
+            rightChip.setStyle("-fx-font-size: 11px; -fx-text-fill: #64748B;");
+        }
+        footer.getChildren().addAll(avatar, fSpacer, rightChip);
+
+        card.getChildren().addAll(topRow, titleLabel, descLabel, footer);
 
         // Click to open Detail Modal
         card.setOnMouseClicked(e -> {
@@ -224,6 +307,8 @@ public class KanbanController {
             Stage stage = new Stage();
             stage.setTitle("Detail Task - " + task.getTitle());
             stage.initModality(Modality.APPLICATION_MODAL);
+            var icon = getClass().getResource("/images/taskforge-icon-128.png");
+            if (icon != null) stage.getIcons().add(new javafx.scene.image.Image(icon.toExternalForm()));
             stage.setScene(new Scene(root, 600, 700));
             stage.show();
         } catch (Exception e) {
@@ -253,11 +338,8 @@ public class KanbanController {
         updateTask.setOnFailed(e -> Platform.runLater(() -> {
             statusLabel.setText("Gagal memindahkan: " + updateTask.getException().getMessage());
             // Show alert for the validation exception (e.g. missing file)
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Gagal Memindahkan Task");
-            alert.setHeaderText(null);
-            alert.setContentText(updateTask.getException().getMessage());
-            alert.showAndWait();
+            Dialogs.error("TaskForge", "Gagal Memindahkan Task",
+                    updateTask.getException().getMessage());
             loadTasks(); // refresh to snap back
         }));
 
@@ -335,6 +417,7 @@ public class KanbanController {
 
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Dialogs.style(dialog);
 
         dialog.showAndWait().ifPresent(result -> {
             if (result == ButtonType.OK
@@ -410,11 +493,42 @@ public class KanbanController {
     }
 
     private void navigateToDashboard() {
+        navigate("/fxml/dashboard.fxml", "TaskForge — Dashboard");
+    }
+
+    // ─── Sidebar navigation (mengikuti dashboard) ────────────────────────────
+
+    @FXML
+    public void handleDashboard() {
+        navigate("/fxml/dashboard.fxml", "TaskForge — Dashboard");
+    }
+
+    @FXML
+    public void handleProyek() {
+        navigate("/fxml/proyek.fxml", "TaskForge — Proyek");
+    }
+
+    @FXML
+    public void handleNotifikasi() {
+        navigate("/fxml/notifikasi.fxml", "TaskForge — Notifikasi");
+    }
+
+    @FXML
+    public void handleProfil() {
+        navigate("/fxml/profil.fxml", "TaskForge — Profil");
+    }
+
+    @FXML
+    public void handleLogout() {
+        SidebarProfileBinder.logout(userNameLabel);
+    }
+
+    private void navigate(String fxml, String title) {
         try {
             Stage stage = (Stage) projectTitleLabel.getScene().getWindow();
-            SceneNavigator.navigate(stage, "/fxml/dashboard.fxml", "TaskForge — Dashboard", 1100, 700);
+            SceneNavigator.navigate(stage, fxml, title, 1100, 700);
         } catch (Exception e) {
-            statusLabel.setText("Gagal kembali ke dashboard");
+            statusLabel.setText("Gagal navigasi: " + e.getMessage());
         }
     }
 }

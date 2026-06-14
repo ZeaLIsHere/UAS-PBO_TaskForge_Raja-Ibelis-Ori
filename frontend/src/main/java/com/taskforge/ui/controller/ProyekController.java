@@ -7,6 +7,8 @@ import com.taskforge.ui.model.ApiResponse;
 import com.taskforge.ui.model.ProjectModel;
 import com.taskforge.ui.service.ApiClient;
 import com.taskforge.ui.session.SessionManager;
+import com.taskforge.ui.util.CoverLoader;
+import com.taskforge.ui.util.Dialogs;
 import com.taskforge.ui.util.SceneNavigator;
 import com.taskforge.ui.util.SidebarProfileBinder;
 import javafx.application.Platform;
@@ -14,6 +16,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
@@ -25,12 +28,14 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -64,9 +69,11 @@ public class ProyekController {
         statusLabel.setText("");
         refreshSidebarProfile();
 
-        boolean isKetua = SessionManager.getInstance().isKetua();
-        newProjectButton.setVisible(isKetua);
-        newProjectButton.setManaged(isKetua);
+        // KETUA membuat/claim proyek kelompok; DOSEN membuat proyek akademik
+        boolean canCreate = SessionManager.getInstance().isKetua()
+                || SessionManager.getInstance().isDosen();
+        newProjectButton.setVisible(canCreate);
+        newProjectButton.setManaged(canCreate);
 
         loadProjects();
     }
@@ -220,6 +227,9 @@ public class ProyekController {
         leaderLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #94A3B8;");
 
         body.getChildren().addAll(titleRow, description, separator, metaRow, leaderLabel);
+        if (project.isHasCover()) {
+            card.getChildren().add(CoverLoader.coverNode(project.getId(), 320, 140, 12));
+        }
         card.getChildren().add(body);
 
         if (clickable) {
@@ -254,34 +264,61 @@ public class ProyekController {
     @FXML
     public void handleNewProject() {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Buat Proyek Baru");
-        dialog.setHeaderText("Isi detail proyek");
+        dialog.setTitle("TaskForge");
+        dialog.setHeaderText("Buat Proyek Baru");
 
         TextField titleField = new TextField();
-        titleField.setPromptText("Judul proyek");
+        titleField.setPromptText("Contoh: Tugas Akhir Sistem Perpustakaan");
+        titleField.getStyleClass().add("text-field");
+
         TextArea descField = new TextArea();
-        descField.setPromptText("Deskripsi (opsional)");
+        descField.setPromptText("Deskripsi singkat proyek (opsional)");
         descField.setPrefRowCount(3);
+        descField.setWrapText(true);
+
         DatePicker deadlinePicker = new DatePicker();
         deadlinePicker.setPromptText("Pilih deadline (opsional)");
+        deadlinePicker.setMaxWidth(Double.MAX_VALUE);
+
         Spinner<Integer> maxMembersSpinner = new Spinner<>(2, 20, 4);
         maxMembersSpinner.setEditable(true);
-        maxMembersSpinner.setPrefWidth(120);
+        maxMembersSpinner.setPrefWidth(90);
+        Label spinnerHint = new Label("anggota (termasuk ketua)");
+        spinnerHint.getStyleClass().add("dialog-form-hint");
+        HBox memberRow = new HBox(10, maxMembersSpinner, spinnerHint);
+        memberRow.setAlignment(Pos.CENTER_LEFT);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(10));
-        grid.addRow(0, new Label("Judul:"), titleField);
-        grid.addRow(1, new Label("Deskripsi:"), descField);
-        grid.addRow(2, new Label("Deadline:"), deadlinePicker);
-        grid.addRow(3, new Label("Max Anggota:"), maxMembersSpinner);
-        Label hint = new Label("(termasuk ketua)");
-        hint.setStyle("-fx-text-fill: #94A3B8; -fx-font-size: 11px;");
-        grid.add(hint, 1, 4);
+        // Pemilih foto sampul (opsional)
+        final File[] coverHolder = {null};
+        Button pickCover = new Button("Pilih Gambar...");
+        pickCover.getStyleClass().add("secondary-button");
+        Label coverName = new Label("Belum ada gambar dipilih");
+        coverName.getStyleClass().add("dialog-form-hint");
+        pickCover.setOnAction(ev -> {
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Pilih Foto Sampul");
+            fc.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Gambar (JPG/PNG)", "*.png", "*.jpg", "*.jpeg"));
+            File f = fc.showOpenDialog(pickCover.getScene().getWindow());
+            if (f != null) { coverHolder[0] = f; coverName.setText(f.getName()); }
+        });
+        HBox coverRow = new HBox(10, pickCover, coverName);
+        coverRow.setAlignment(Pos.CENTER_LEFT);
 
-        dialog.getDialogPane().setContent(grid);
+        VBox content = new VBox(16,
+                field("Judul Proyek", titleField),
+                field("Deskripsi", descField),
+                field("Deadline", deadlinePicker),
+                field("Maksimal Anggota", memberRow),
+                field("Foto Sampul (opsional)", coverRow));
+        content.setPadding(new Insets(22, 26, 8, 26));
+        content.setPrefWidth(440);
+
+        dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ((Button) dialog.getDialogPane().lookupButton(ButtonType.OK)).setText("Buat Proyek");
+        ((Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL)).setText("Batal");
+        Dialogs.style(dialog);
 
         dialog.showAndWait().ifPresent(result -> {
             if (result == ButtonType.OK && !titleField.getText().isBlank()) {
@@ -293,13 +330,26 @@ public class ProyekController {
                         titleField.getText().trim(),
                         descField.getText().trim(),
                         deadlineStr,
-                        maxMembersSpinner.getValue()
+                        maxMembersSpinner.getValue(),
+                        coverHolder[0]
                 );
             }
         });
     }
 
-    private void submitNewProject(String title, String description, String deadline, int maxMembers) {
+    /** Bangun satu baris form: label tebal di atas, input di bawahnya. */
+    private VBox field(String labelText, Node input) {
+        Label label = new Label(labelText);
+        label.getStyleClass().add("dialog-form-label");
+        if (input instanceof Region region) {
+            region.setMaxWidth(Double.MAX_VALUE);
+        }
+        VBox box = new VBox(6, label, input);
+        return box;
+    }
+
+    private void submitNewProject(String title, String description, String deadline,
+                                  int maxMembers, File cover) {
         Task<Void> createTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
@@ -310,6 +360,15 @@ public class ProyekController {
                 body.put("maxMembers", maxMembers);
                 ApiResponse<Object> raw = ApiClient.post("/api/projects", body, Object.class);
                 if (!raw.isSuccess()) throw new Exception(raw.getMessage());
+
+                // Upload foto sampul bila dipilih
+                if (cover != null) {
+                    ProjectModel created = MAPPER.convertValue(raw.getData(), ProjectModel.class);
+                    if (created != null && created.getId() != null) {
+                        ApiClient.postMultipart(
+                                "/api/projects/" + created.getId() + "/cover", cover, Object.class);
+                    }
+                }
                 return null;
             }
         };

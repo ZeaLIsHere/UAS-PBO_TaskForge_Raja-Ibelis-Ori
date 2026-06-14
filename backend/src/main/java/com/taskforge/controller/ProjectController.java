@@ -12,11 +12,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -39,7 +42,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('KETUA')")
+    @PreAuthorize("hasRole('KETUA') or hasRole('DOSEN')")
     public ResponseEntity<ApiResponse<ProjectResponse>> createProject(
             @Valid @RequestBody ProjectRequest request, Authentication auth) {
         ProjectResponse response = projectService.createProject(auth.getName(), request);
@@ -77,6 +80,23 @@ public class ProjectController {
             Authentication auth) {
         UserResponse member = projectService.addMember(projectId, auth.getName(), request);
         return ResponseEntity.ok(ApiResponse.success("Anggota berhasil ditambahkan", member));
+    }
+
+    @PostMapping(value = "/{projectId}/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("@projectService.isOwner(#projectId, authentication.name)")
+    public ResponseEntity<ApiResponse<Void>> uploadCover(
+            @PathVariable Long projectId,
+            @RequestParam("file") MultipartFile file,
+            Authentication auth) throws IOException {
+        projectService.uploadCover(projectId, auth.getName(), file);
+        return ResponseEntity.ok(ApiResponse.success("Foto sampul berhasil diupload", null));
+    }
+
+    @GetMapping("/{projectId}/cover")
+    @PreAuthorize("@projectService.isMember(#projectId, authentication.name)")
+    public ResponseEntity<byte[]> getCover(@PathVariable Long projectId) throws IOException {
+        ProjectService.CoverFile cover = projectService.getCover(projectId);
+        return ResponseEntity.ok().contentType(cover.mediaType()).body(cover.data());
     }
 
     @GetMapping("/{projectId}/activity")

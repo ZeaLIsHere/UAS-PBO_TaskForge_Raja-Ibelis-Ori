@@ -1,65 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.taskforge.ui.controller.FileHubController"
-            style="-fx-background-color: #F8FAFC;">
+            style="-fx-background-color: #F7F9FB;">
 
-    <!-- ==================== HEADER ==================== -->
-    <top>
-        <VBox style="-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 8, 0, 0, 3);">
-
-            <!-- Top bar -->
-            <HBox alignment="CENTER_LEFT" spacing="14"
-                  style="-fx-background-color: #0F172A; -fx-padding: 12 24 12 20;">
-                <Button text="← Kanban" onAction="#handleBack"
-                        style="-fx-background-color: transparent; -fx-text-fill: #94A3B8;
-                               -fx-font-size: 12px; -fx-cursor: hand;
-                               -fx-border-color: #334155; -fx-border-radius: 6;
-                               -fx-background-radius: 6; -fx-padding: 5 12 5 12;"/>
-                <VBox spacing="1">
-                    <Label fx:id="projectTitleLabel"
-                           style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-                    <Label text="File Hub"
-                           style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+    <!-- ==================== SIDEBAR ==================== -->
+    <left>
+        <VBox minWidth="260" prefWidth="260" maxWidth="260" spacing="0" styleClass="sidebar-root">
+            <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 24 22 18 22;">
+                <ImageView fitWidth="36" fitHeight="36" preserveRatio="true" smooth="true">
+                    <image><Image url="@/images/taskforge-icon-48.png"/></image>
+                </ImageView>
+                <VBox spacing="0">
+                    <HBox spacing="0" alignment="CENTER_LEFT">
+                        <Label text="Task" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                        <Label text="Forge" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #818CF8;"/>
+                    </HBox>
+                    <Label text="Project Hub Mahasiswa" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
                 </VBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="statusLabel"
-                       style="-fx-text-fill: #FCA5A5; -fx-font-size: 12px;"/>
             </HBox>
 
-            <!-- Toolbar: task selector + action buttons -->
+            <VBox spacing="10" styleClass="sidebar-profile-card">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <StackPane prefWidth="44" prefHeight="44">
+                        <Rectangle width="44" height="44" arcWidth="44" arcHeight="44" style="-fx-fill: #4F46E5;"/>
+                        <Label fx:id="avatarInitials" text="?"
+                               style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;"
+                               StackPane.alignment="CENTER"/>
+                    </StackPane>
+                    <VBox spacing="1">
+                        <Label fx:id="userNameLabel"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #F1F5F9;"
+                               maxWidth="150"/>
+                        <Label fx:id="userNimLabel" text="" style="-fx-font-size: 11px; -fx-text-fill: #64748B;"/>
+                    </VBox>
+                </HBox>
+                <HBox alignment="CENTER_LEFT">
+                    <Label fx:id="userRoleLabel" styleClass="role-pill"/>
+                </HBox>
+            </VBox>
+
+            <Label text="WORKSPACE"
+                   style="-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #475569; -fx-padding: 18 0 8 22;"/>
+            <VBox spacing="2" style="-fx-padding: 0 10 0 10;">
+                <Button text="📊   Dashboard" onAction="#handleDashboard" styleClass="nav-item" style="-fx-max-width: Infinity;"/>
+                <Button text="📁   Proyek" onAction="#handleProyek" styleClass="nav-item-active" style="-fx-max-width: Infinity;"/>
+                <Button text="🔔   Notifikasi" onAction="#handleNotifikasi" styleClass="nav-item" style="-fx-max-width: Infinity;"/>
+                <Button text="👤   Profil" onAction="#handleProfil" styleClass="nav-item" style="-fx-max-width: Infinity;"/>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <VBox style="-fx-border-color: #1E293B; -fx-border-width: 1 0 0 0; -fx-padding: 8 10 14 10;">
+                <Button text="🚪   Keluar" onAction="#handleLogout" styleClass="nav-item-logout" style="-fx-max-width: Infinity;"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- ==================== MAIN ==================== -->
+    <center>
+        <VBox spacing="0" style="-fx-background-color: #F7F9FB;">
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="16"
+                  style="-fx-padding: 16 28 16 28; -fx-background-color: white;
+                         -fx-border-color: #E2E8F0; -fx-border-width: 0 0 1 0;
+                         -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.04), 4, 0, 0, 2);">
+                <Button text="‹  Kembali ke Kanban" onAction="#handleBack"
+                        style="-fx-background-color: transparent; -fx-text-fill: #64748B;
+                               -fx-font-size: 13px; -fx-cursor: hand; -fx-padding: 6 4 6 0;"/>
+                <Region style="-fx-min-width: 1; -fx-pref-width: 1; -fx-pref-height: 24; -fx-background-color: #E2E8F0;"/>
+                <Label fx:id="projectTitleLabel"
+                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #191C1E; -fx-max-width: 460;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="statusLabel" style="-fx-text-fill: #DC2626; -fx-font-size: 12px;"/>
+            </HBox>
+
+            <!-- Tab bar -->
+            <HBox alignment="CENTER_LEFT" spacing="0"
+                  style="-fx-background-color: white; -fx-border-color: #E2E8F0; -fx-border-width: 0 0 1 0;
+                         -fx-padding: 0 28 0 28;">
+                <Button text="Kanban" onAction="#handleBack"
+                        style="-fx-background-color: transparent; -fx-text-fill: #64748B;
+                               -fx-font-size: 13px; -fx-padding: 12 18 12 18; -fx-background-radius: 0; -fx-cursor: hand;"/>
+                <Button text="File Hub"
+                        style="-fx-background-color: transparent; -fx-text-fill: #4F46E5;
+                               -fx-font-size: 13px; -fx-font-weight: bold;
+                               -fx-padding: 12 18 12 18; -fx-background-radius: 0; -fx-cursor: hand;
+                               -fx-border-color: transparent transparent #4F46E5 transparent; -fx-border-width: 0 0 2 0;"/>
+                <Button text="Laporan &amp; Skor" onAction="#handleReport"
+                        style="-fx-background-color: transparent; -fx-text-fill: #64748B;
+                               -fx-font-size: 13px; -fx-padding: 12 18 12 18; -fx-background-radius: 0; -fx-cursor: hand;"/>
+            </HBox>
+
+            <!-- Toolbar -->
             <HBox spacing="12" alignment="CENTER_LEFT"
-                  style="-fx-background-color: white; -fx-padding: 12 24 12 24;
+                  style="-fx-background-color: white; -fx-padding: 14 28 14 28;
                          -fx-border-color: #E2E8F0; -fx-border-width: 0 0 1 0;">
                 <Label text="Task"
                        style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #475569;"/>
-                <ComboBox fx:id="taskSelector" onAction="#handleTaskSelected"
-                          prefWidth="300"
+                <ComboBox fx:id="taskSelector" onAction="#handleTaskSelected" prefWidth="300"
                           style="-fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0;
                                  -fx-border-radius: 8; -fx-background-radius: 8;"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="uploadButton" text="Upload File" onAction="#handleUpload"
-                        style="-fx-background-color: #4F46E5; -fx-text-fill: white;
-                               -fx-font-size: 13px; -fx-font-weight: bold;
-                               -fx-background-radius: 8; -fx-padding: 8 16 8 16; -fx-cursor: hand;"/>
+                        styleClass="primary-button"
+                        style="-fx-pref-height: 38; -fx-font-size: 13px; -fx-padding: 0 16 0 16; -fx-background-radius: 10;"/>
                 <Button fx:id="addLinkButton" text="Tambah Link" onAction="#handleAddLink"
-                        style="-fx-background-color: white; -fx-text-fill: #475569;
-                               -fx-font-size: 13px; -fx-font-weight: bold;
-                               -fx-background-radius: 8; -fx-padding: 8 16 8 16; -fx-cursor: hand;
-                               -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-border-width: 1;"/>
+                        styleClass="secondary-button"
+                        style="-fx-pref-height: 38; -fx-font-size: 13px; -fx-padding: 0 16 0 16; -fx-background-radius: 10;"/>
             </HBox>
-        </VBox>
-    </top>
 
-    <!-- ==================== FILE LIST ==================== -->
-    <center>
-        <ScrollPane fitToWidth="true"
-                    style="-fx-background: transparent; -fx-background-color: transparent;">
-            <VBox fx:id="fileListPane" spacing="10"
-                  style="-fx-padding: 20 28 28 28;"/>
-        </ScrollPane>
+            <!-- File list -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background: transparent; -fx-background-color: transparent;">
+                <VBox fx:id="fileListPane" spacing="10" style="-fx-padding: 20 28 28 28;"/>
+            </ScrollPane>
+        </VBox>
     </center>
 </BorderPane>

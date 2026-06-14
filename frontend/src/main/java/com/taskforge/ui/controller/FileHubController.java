@@ -8,15 +8,15 @@ import com.taskforge.ui.model.FileModel;
 import com.taskforge.ui.model.ProjectModel;
 import com.taskforge.ui.model.TaskModel;
 import com.taskforge.ui.service.ApiClient;
+import com.taskforge.ui.util.Dialogs;
 import com.taskforge.ui.util.SceneNavigator;
+import com.taskforge.ui.util.SidebarProfileBinder;
 import com.taskforge.ui.session.SessionManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
@@ -41,6 +41,12 @@ public class FileHubController {
     @FXML private Button uploadButton;
     @FXML private Button addLinkButton;
 
+    // Sidebar profil (mengikuti dashboard)
+    @FXML private Label avatarInitials;
+    @FXML private Label userNameLabel;
+    @FXML private Label userNimLabel;
+    @FXML private Label userRoleLabel;
+
     private ProjectModel currentProject;
     private List<TaskModel> tasks;
     private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -48,6 +54,7 @@ public class FileHubController {
     public void initWithProject(ProjectModel project) {
         this.currentProject = project;
         projectTitleLabel.setText(project.getTitle());
+        SidebarProfileBinder.refresh(userNameLabel, userNimLabel, userRoleLabel, avatarInitials);
         loadTasks();
     }
 
@@ -228,8 +235,11 @@ public class FileHubController {
 
     private void deleteFile(FileModel file) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "Hapus '" + file.getName() + "'?", ButtonType.YES, ButtonType.NO);
-        confirm.setHeaderText("Konfirmasi Hapus");
+                "Hapus '" + file.getName() + "'? Tindakan ini tidak bisa dibatalkan.",
+                ButtonType.YES, ButtonType.NO);
+        confirm.setTitle("TaskForge");
+        confirm.setHeaderText("Konfirmasi Hapus File");
+        Dialogs.style(confirm.getDialogPane());
         confirm.showAndWait().ifPresent(result -> {
             if (result != ButtonType.YES) return;
             Task<Void> delTask = new Task<>() {
@@ -322,7 +332,8 @@ public class FileHubController {
         if (task == null) { statusLabel.setText("Pilih task terlebih dahulu"); return; }
 
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Tambah Link Eksternal");
+        dialog.setTitle("TaskForge");
+        dialog.setHeaderText("Tambah Link Eksternal");
         TextField nameField = new TextField();
         nameField.setPromptText("Nama link (contoh: Google Drive Bab 2)");
         TextField urlField = new TextField();
@@ -338,6 +349,7 @@ public class FileHubController {
 
         dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        Dialogs.style(dialog);
 
         dialog.showAndWait().ifPresent(result -> {
             if (result != ButtonType.OK || nameField.getText().isBlank() || urlField.getText().isBlank()) return;
@@ -374,6 +386,44 @@ public class FileHubController {
             ctrl.initWithProject(currentProject);
         } catch (Exception e) {
             statusLabel.setText("Gagal kembali: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void handleReport() {
+        try {
+            Stage stage = (Stage) projectTitleLabel.getScene().getWindow();
+            ReportScoreController ctrl = SceneNavigator.navigate(
+                    stage, "/fxml/report.fxml", "TaskForge — Kontribusi & Laporan", 1000, 680);
+            ctrl.initWithProject(currentProject);
+        } catch (Exception e) {
+            statusLabel.setText("Gagal membuka Laporan: " + e.getMessage());
+        }
+    }
+
+    // ─── Sidebar navigation (mengikuti dashboard) ────────────────────────────
+
+    @FXML
+    public void handleDashboard() { navigate("/fxml/dashboard.fxml", "TaskForge — Dashboard"); }
+
+    @FXML
+    public void handleProyek() { navigate("/fxml/proyek.fxml", "TaskForge — Proyek"); }
+
+    @FXML
+    public void handleNotifikasi() { navigate("/fxml/notifikasi.fxml", "TaskForge — Notifikasi"); }
+
+    @FXML
+    public void handleProfil() { navigate("/fxml/profil.fxml", "TaskForge — Profil"); }
+
+    @FXML
+    public void handleLogout() { SidebarProfileBinder.logout(userNameLabel); }
+
+    private void navigate(String fxml, String title) {
+        try {
+            Stage stage = (Stage) projectTitleLabel.getScene().getWindow();
+            SceneNavigator.navigate(stage, fxml, title, 1100, 700);
+        } catch (Exception e) {
+            statusLabel.setText("Gagal navigasi: " + e.getMessage());
         }
     }
 }

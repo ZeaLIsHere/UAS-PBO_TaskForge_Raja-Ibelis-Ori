@@ -33,7 +33,23 @@ public class SessionManager {
     public UserModel getCurrentUser() { return currentUser; }
     public boolean isLoggedIn() { return token != null; }
 
-    public boolean isKetua() {
-        return currentUser != null && "KETUA".equals(currentUser.getRole());
+    // ─── Role helpers ──────────────────────────────────────────────────────────
+    public String getRole() {
+        return currentUser != null ? currentUser.getRole() : null;
     }
+
+    private boolean roleIs(String role) {
+        return currentUser != null && role.equals(currentUser.getRole());
+    }
+
+    public boolean isKetua()   { return roleIs("KETUA"); }
+    public boolean isAnggota() { return roleIs("ANGGOTA"); }
+    public boolean isDosen()   { return roleIs("DOSEN"); }
+    public boolean isAsdos()   { return roleIs("ASDOS"); }
+
+    /** DOSEN & ASDOS: pengawas yang bisa memantau semua kelompok. */
+    public boolean isObserver() { return isDosen() || isAsdos(); }
+
+    /** Mahasiswa (KETUA & ANGGOTA): peserta yang mengerjakan proyek. */
+    public boolean isMahasiswa() { return isKetua() || isAnggota(); }
 }

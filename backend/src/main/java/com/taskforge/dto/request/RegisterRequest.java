@@ -26,4 +26,10 @@ public class RegisterRequest {
 
     @NotNull(message = "Role wajib dipilih")
     private User.Role role;
+
+    @Size(max = 20, message = "NIM maksimal 20 karakter")
+    private String nim;
+
+    @Size(max = 20, message = "NIPM maksimal 20 karakter")
+    private String nipm;
 }

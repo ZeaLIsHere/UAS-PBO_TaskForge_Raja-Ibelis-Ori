@@ -2,7 +2,6 @@ package com.taskforge.service;
 
 import com.taskforge.dto.request.TaskCommentRequest;
 import com.taskforge.dto.response.TaskCommentResponse;
-import com.taskforge.exception.ResourceNotFoundException;
 import com.taskforge.exception.ValidationException;
 import com.taskforge.model.Project;
 import com.taskforge.model.User;

@@ -10,6 +10,7 @@ com\taskforge\controller\ProjectController.class
 com\taskforge\model\User$UserBuilder.class
 com\taskforge\security\JwtAuthFilter.class
 com\taskforge\exception\ValidationException.class
+com\taskforge\dto\request\TaskCommentRequest.class
 com\taskforge\model\ContributionScore$ContributionScoreBuilder.class
 com\taskforge\model\task\SimpleTask.class
 com\taskforge\interfaces\Scorable.class
@@ -21,14 +22,18 @@ com\taskforge\dto\response\TaskResponse$SubTaskResponse$SubTaskResponseBuilder.c
 com\taskforge\dto\response\TaskResponse.class
 com\taskforge\dto\request\TaskStatusRequest.class
 com\taskforge\dto\request\MemberRequest.class
+com\taskforge\model\task\TaskComment$TaskCommentBuilder.class
 com\taskforge\model\task\BaseTask.class
 com\taskforge\repository\UserRepository.class
 com\taskforge\seeder\DataSeeder.class
 com\taskforge\model\User$Role.class
 com\taskforge\dto\response\ProjectResponse$ProjectResponseBuilder.class
+com\taskforge\dto\response\TaskCommentResponse.class
 com\taskforge\model\task\BaseTask$TaskStatus.class
+com\taskforge\repository\TaskCommentRepository.class
 com\taskforge\dto\response\AuthResponse.class
 com\taskforge\dto\response\TaskResponse$TaskResponseBuilder.class
+com\taskforge\controller\TaskCommentController.class
 com\taskforge\dto\response\ActivityLogResponse$ActivityLogResponseBuilder.class
 com\taskforge\service\ActivityLogService.class
 com\taskforge\dto\response\AuthResponse$AuthResponseBuilder.class
@@ -52,11 +57,13 @@ com\taskforge\report\ProjectSummaryReport.class
 com\taskforge\service\UserService.class
 com\taskforge\common\ApiResponse.class
 com\taskforge\dto\response\ScoreResponse.class
+com\taskforge\dto\response\TaskCommentResponse$TaskCommentResponseBuilder.class
 com\taskforge\dto\request\ProjectRequest.class
 com\taskforge\security\JwtAuthEntryPoint.class
 com\taskforge\model\task\BaseTask$Priority.class
 com\taskforge\dto\response\WorkspaceDataResponse$WorkspaceDataResponseBuilder.class
 com\taskforge\repository\ProjectRepository.class
+com\taskforge\model\task\TaskComment.class
 com\taskforge\dto\request\TaskRequest.class
 com\taskforge\dto\response\WorkspaceDataResponse.class
 com\taskforge\dto\request\TaskAssignRequest.class
@@ -94,3 +101,4 @@ com\taskforge\model\User.class
 com\taskforge\interfaces\Accessible.class
 com\taskforge\service\FileService.class
 com\taskforge\model\ActivityLog$ActionType.class
+com\taskforge\service\TaskCommentService.class

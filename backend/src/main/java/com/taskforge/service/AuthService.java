@@ -35,6 +35,8 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .nim(request.getNim())
+                .nipm(request.getNipm())
                 .build();
 
         User saved = userRepository.save(user);

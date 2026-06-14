@@ -19,6 +19,7 @@ public class ProjectModel {
     private int taskCount;
     private int completedTaskCount;
     private int overdueTaskCount;
+    private boolean hasCover;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -52,6 +53,9 @@ public class ProjectModel {
 
     public int getOverdueTaskCount() { return overdueTaskCount; }
     public void setOverdueTaskCount(int overdueTaskCount) { this.overdueTaskCount = overdueTaskCount; }
+
+    public boolean isHasCover() { return hasCover; }
+    public void setHasCover(boolean hasCover) { this.hasCover = hasCover; }
 
     public int getMemberCount() {
         int count = members != null ? members.size() : 0;

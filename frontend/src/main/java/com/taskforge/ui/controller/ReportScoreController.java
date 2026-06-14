@@ -7,15 +7,15 @@ import com.taskforge.ui.model.ApiResponse;
 import com.taskforge.ui.model.ProjectModel;
 import com.taskforge.ui.model.ScoreModel;
 import com.taskforge.ui.service.ApiClient;
+import com.taskforge.ui.util.Dialogs;
 import com.taskforge.ui.util.SceneNavigator;
+import com.taskforge.ui.util.SidebarProfileBinder;
 import com.taskforge.ui.session.SessionManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -30,12 +30,19 @@ public class ReportScoreController {
     @FXML private VBox reportPane;
     @FXML private Button generateReportButton;
 
+    // Sidebar profil (mengikuti dashboard)
+    @FXML private Label avatarInitials;
+    @FXML private Label userNameLabel;
+    @FXML private Label userNimLabel;
+    @FXML private Label userRoleLabel;
+
     private ProjectModel currentProject;
     private static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
 
     public void initWithProject(ProjectModel project) {
         this.currentProject = project;
         projectTitleLabel.setText(project.getTitle());
+        SidebarProfileBinder.refresh(userNameLabel, userNimLabel, userRoleLabel, avatarInitials);
 
         boolean isKetua = SessionManager.getInstance().isKetua();
         generateReportButton.setVisible(isKetua);
@@ -165,6 +172,7 @@ public class ReportScoreController {
 
         dialog.getDialogPane().setContent(area);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        Dialogs.style(dialog);
         dialog.showAndWait();
     }
 
@@ -182,6 +190,44 @@ public class ReportScoreController {
             ctrl.initWithProject(currentProject);
         } catch (Exception e) {
             statusLabel.setText("Gagal kembali: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void handleFileHub() {
+        try {
+            Stage stage = (Stage) projectTitleLabel.getScene().getWindow();
+            FileHubController ctrl = SceneNavigator.navigate(
+                    stage, "/fxml/filehub.fxml", "TaskForge — File Hub", 1200, 700);
+            ctrl.initWithProject(currentProject);
+        } catch (Exception e) {
+            statusLabel.setText("Gagal membuka File Hub: " + e.getMessage());
+        }
+    }
+
+    // ─── Sidebar navigation (mengikuti dashboard) ────────────────────────────
+
+    @FXML
+    public void handleDashboard() { navigate("/fxml/dashboard.fxml", "TaskForge — Dashboard"); }
+
+    @FXML
+    public void handleProyek() { navigate("/fxml/proyek.fxml", "TaskForge — Proyek"); }
+
+    @FXML
+    public void handleNotifikasi() { navigate("/fxml/notifikasi.fxml", "TaskForge — Notifikasi"); }
+
+    @FXML
+    public void handleProfil() { navigate("/fxml/profil.fxml", "TaskForge — Profil"); }
+
+    @FXML
+    public void handleLogout() { SidebarProfileBinder.logout(userNameLabel); }
+
+    private void navigate(String fxml, String title) {
+        try {
+            Stage stage = (Stage) projectTitleLabel.getScene().getWindow();
+            SceneNavigator.navigate(stage, fxml, title, 1100, 700);
+        } catch (Exception e) {
+            statusLabel.setText("Gagal navigasi: " + e.getMessage());
         }
     }
 }

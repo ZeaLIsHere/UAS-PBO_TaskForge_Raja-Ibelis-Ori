@@ -34,7 +34,6 @@ public class DataSeeder implements CommandLineRunner {
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
     private final ProjectFileRepository fileRepository;
-    private final ContributionScoreRepository scoreRepository;
     private final ContributionService contributionService;
     private final PasswordEncoder passwordEncoder;
 

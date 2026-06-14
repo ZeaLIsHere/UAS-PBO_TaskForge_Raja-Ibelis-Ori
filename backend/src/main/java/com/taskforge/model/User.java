@@ -32,10 +32,13 @@ public class User {
     @Column(length = 20)
     private String nim;
 
+    @Column(length = 20)
+    private String nipm;
+
     @Column(length = 500)
     private String photoPath;
 
     public enum Role {
-        KETUA, ANGGOTA
+        KETUA, ANGGOTA, DOSEN, ASDOS
     }
 }

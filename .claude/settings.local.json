@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(New-Item *)"
+      "PowerShell(New-Item *)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='java.exe'\" | Select-Object ProcessId, @{N='Cmd';E={$_.CommandLine.Substring\\(0,[Math]::Min\\(120,$_.CommandLine.Length\\)\\)}} | Format-Table -Wrap -AutoSize)"
     ]
   }
 }
